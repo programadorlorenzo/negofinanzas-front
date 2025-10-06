@@ -65,6 +65,8 @@ export const authOptions: NextAuthOptions = {
             accessToken: data.accessToken,
           };
 
+          console.log("Authenticated user:", authUser);
+
           return authUser;
         } catch (error) {
           console.error("Error during authentication:", error);
@@ -75,15 +77,22 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      // SIEMPRE sobrescribir completamente con datos del usuario cuando hay un login
       if (user) {
-        token.accessToken = user.accessToken;
-        token.id = user.id;
-        token.firstName = user.firstName;
-        token.lastName = user.lastName;
-        token.email = user.email || undefined; // Manejar posible null
-        token.role = user.role;
-        token.sucursales = user.sucursales;
-        token.permissions = user.permissions;
+        // Crear un token completamente nuevo para evitar datos anteriores
+        const newToken = {
+          accessToken: user.accessToken,
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email || undefined,
+          role: user.role,
+          sucursales: user.sucursales,
+          permissions: user.permissions,
+          // Agregar timestamp para forzar actualización
+          iat: Math.floor(Date.now() / 1000),
+        };
+        return newToken;
       }
       return token;
     },
@@ -125,8 +134,21 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours
+    updateAge: 0, // Forzar actualización de sesión en cada request
   },
   jwt: {
     maxAge: 24 * 60 * 60, // 24 hours
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // false para desarrollo local
+        maxAge: 24 * 60 * 60 // 24 horas
+      }
+    }
   },
 };

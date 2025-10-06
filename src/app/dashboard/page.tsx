@@ -21,7 +21,6 @@ import {
   NavLink
 } from '@mantine/core'
 import { IconLogout, IconBuildingBank, IconSun, IconMoon, IconMapPin, IconHome, IconChartBar } from '@tabler/icons-react'
-import { SessionUser } from '@/types/next-auth'
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -33,9 +32,6 @@ export default function Dashboard() {
       router.push('/auth/signin')
     }
   }, [status, router])
-
-  // Ya no necesitamos el cast porque session.user está correctamente tipado
-  const user = session?.user
 
   if (status === 'loading') {
     return (
@@ -49,47 +45,15 @@ export default function Dashboard() {
     return null
   }
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/auth/signin' })
+  const handleSignOut = async () => {
+    // Limpiar completamente la sesión y redirigir
+    await signOut({ 
+      callbackUrl: '/auth/signin',
+      redirect: true 
+    })
   }
 
-  // Función para obtener el nombre completo del usuario
-  const getUserFullName = (user: SessionUser | undefined): string => {
-    if (!user) {
-      return 'Usuario'
-    }
-    
-    const firstName = user.firstName?.trim() || ''
-    const lastName = user.lastName?.trim() || ''
-    
-    if (firstName && lastName) {
-      return `${firstName} ${lastName}`
-    } else if (firstName) {
-      return firstName
-    } else if (lastName) {
-      return lastName
-    } else if (user.email) {
-      const emailName = user.email.split('@')[0]
-      return emailName
-    } else {
-      return 'Usuario'
-    }
-  }
 
-  // Función para obtener el nombre corto para el header
-  const getUserShortName = (user: SessionUser | undefined): string => {
-    if (!user) return 'Usuario'
-    
-    const firstName = user.firstName?.trim() || ''
-    
-    if (firstName) {
-      return firstName
-    } else if (user.email) {
-      return user.email.split('@')[0]
-    } else {
-      return 'Usuario'
-    }
-  }
 
   return (
     <AppShell
@@ -105,10 +69,13 @@ export default function Dashboard() {
           </Group>
           <Group>
             <Text size="sm">
-              {getUserShortName(user)}
+              DIRECTO: {session.user?.firstName} {session.user?.lastName}
+            </Text>
+            <Text size="xs" c="dimmed">
+              ID: {session.user?.id}
             </Text>
             <Badge variant="light" color="blue">
-              {user?.role || 'Usuario'}
+              {session.user?.role || 'Usuario'}
             </Badge>
             <ActionIcon
               onClick={() => toggleColorScheme()}
@@ -162,17 +129,17 @@ export default function Dashboard() {
                 <IconBuildingBank size={48} color="var(--mantine-color-blue-6)" />
               </Group>
               <Title order={1} ta="center" mb="md">
-                ¡Bienvenido, {getUserFullName(user)}!
+                ¡Bienvenido, {session.user.firstName} {session.user.lastName}!
               </Title>
               <Text ta="center" size="lg" c="dimmed">
-                Tienes acceso a {user?.sucursales?.length || 0} sucursales
+                Tienes acceso a {session.user.sucursales?.length || 0} sucursales
               </Text>
             </Card>
 
             {/* Lista de Sucursales */}
-            {user?.sucursales && user.sucursales.length > 0 ? (
+            {session.user.sucursales && session.user.sucursales.length > 0 ? (
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
-                {user.sucursales.map((sucursal: string, index: number) => (
+                {session.user.sucursales.map((sucursal: string, index: number) => (
                   <Card
                     key={index}
                     shadow="sm"

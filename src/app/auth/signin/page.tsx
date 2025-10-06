@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
+import { useState, useEffect } from 'react'
+import { signIn, getSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import {
   Container,
@@ -24,6 +24,20 @@ export default function SignIn() {
   const [error, setError] = useState('')
   const router = useRouter()
 
+  // Limpiar completamente cualquier sesión anterior al cargar la página
+  useEffect(() => {
+    const clearPreviousSession = async () => {
+      // Forzar logout silencioso para limpiar cualquier sesión anterior
+      await signOut({ redirect: false })
+      // Limpiar localStorage y sessionStorage
+      if (typeof window !== 'undefined') {
+        localStorage.clear()
+        sessionStorage.clear()
+      }
+    }
+    clearPreviousSession()
+  }, [])
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -40,19 +54,23 @@ export default function SignIn() {
     setError('')
 
     try {
-      const result = await signIn('credentials', {
+      // Forzar limpieza de sesión anterior antes del login
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
+      }).then(async (result) => {
+        if (result?.error) {
+          setError('Credenciales inválidas. Por favor, intenta de nuevo.')
+        } else {
+          // Forzar actualización completa de la sesión
+          await getSession()
+          router.push('/dashboard')
+          router.refresh()
+          // Forzar recarga completa de la página para limpiar cualquier caché
+          window.location.href = '/dashboard'
+        }
       })
-
-      if (result?.error) {
-        setError('Credenciales inválidas. Por favor, intenta de nuevo.')
-      } else {
-        await getSession()
-        router.push('/dashboard')
-        router.refresh()
-      }
     } catch {
       setError('Error al iniciar sesión. Por favor, intenta de nuevo.')
     } finally {
