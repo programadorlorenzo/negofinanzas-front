@@ -15,14 +15,17 @@ import {
   Stack,
   Badge,
   Loader,
-  Center
+  Center,
+  ActionIcon,
+  useMantineColorScheme
 } from '@mantine/core'
-import { IconLogout, IconUser, IconBuildingBank, IconSettings, IconFileText } from '@tabler/icons-react'
+import { IconLogout, IconUser, IconBuildingBank, IconSettings, IconFileText, IconSun, IconMoon } from '@tabler/icons-react'
 import { SessionUser } from '@/types/next-auth'
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -63,6 +66,14 @@ export default function Dashboard() {
             <Text size="sm">
               Bienvenido, {user?.firstName || user?.lastName ? `${user.firstName} ${user.lastName}` : 'Usuario'}
             </Text>
+            <ActionIcon
+              onClick={() => toggleColorScheme()}
+              variant="default"
+              size="lg"
+              aria-label="Toggle color scheme"
+            >
+              {colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+            </ActionIcon>
             <Button
               leftSection={<IconLogout size={16} />}
               variant="outline"

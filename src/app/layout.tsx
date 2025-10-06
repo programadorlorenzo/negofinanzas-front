@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { ColorSchemeScript } from '@mantine/core';
 import { AuthProvider } from '@/components/AuthProvider';
+import { ClientMantineProvider } from '@/components/ClientMantineProvider';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
@@ -24,14 +25,14 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <ColorSchemeScript defaultColorScheme="dark" />
+        <ColorSchemeScript />
       </head>
       <body className={inter.className}>
-        <MantineProvider defaultColorScheme="dark">
+        <ClientMantineProvider>
           <AuthProvider>
             {children}
           </AuthProvider>
-        </MantineProvider>
+        </ClientMantineProvider>
       </body>
     </html>
   );
