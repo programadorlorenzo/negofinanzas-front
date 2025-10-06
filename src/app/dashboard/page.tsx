@@ -1,9 +1,8 @@
 "use client"
 
-import { useSession, signOut } from 'next-auth/react'
+import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { clearAuthCookies } from '@/lib/auth-utils'
 import {
   AppShell,
   Container,
@@ -24,17 +23,30 @@ import {
 import { IconLogout, IconBuildingBank, IconSun, IconMoon, IconMapPin, IconHome, IconChartBar } from '@tabler/icons-react'
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { session, isAuthenticated, isLoading, signOut } = useAuth()
   const router = useRouter()
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
+  // DEBUG: Log para ver los datos del usuario
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (session?.user) {
+      console.log('🔍 DASHBOARD - Datos del usuario:', {
+        firstName: session.user.firstName,
+        lastName: session.user.lastName,
+        email: session.user.email,
+        id: session.user.id,
+        fullSession: session
+      });
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
       router.push('/auth/signin')
     }
-  }, [status, router])
+  }, [isAuthenticated, isLoading, router])
 
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <Center h="100vh">
         <Loader size="lg" />
@@ -47,14 +59,7 @@ export default function Dashboard() {
   }
 
   const handleSignOut = async () => {
-    // Limpiar cookies manualmente ANTES del signOut oficial
-    clearAuthCookies()
-    
-    // Luego hacer el signOut oficial de NextAuth
-    await signOut({ 
-      callbackUrl: '/auth/signin',
-      redirect: true 
-    })
+    await signOut()
   }
 
 
@@ -73,10 +78,7 @@ export default function Dashboard() {
           </Group>
           <Group>
             <Text size="sm">
-              DIRECTO: {session.user?.firstName} {session.user?.lastName}
-            </Text>
-            <Text size="xs" c="dimmed">
-              ID: {session.user?.id}
+              {session.user?.firstName} {session.user?.lastName}
             </Text>
             <Badge variant="light" color="blue">
               {session.user?.role || 'Usuario'}

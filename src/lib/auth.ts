@@ -1,5 +1,6 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 import { SessionUser } from "../types/next-auth";
 
 // Tipamos la respuesta del backend
@@ -18,6 +19,13 @@ interface BackendLoginResponse {
   refreshToken: string;
 }
 
+// Interfaz extendida para el token JWT
+interface ExtendedJWT {
+  accessToken?: string;
+  user?: SessionUser;
+  expired?: boolean;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -32,27 +40,18 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const response = await fetch(
-            `${
-              process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
-            }/auth/login`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            }
-          );
+          // Crear instancia de axios específica para autenticación
+          const authAxios = axios.create({
+            baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+            timeout: 10000,
+          });
 
-          if (!response.ok) {
-            return null;
-          }
+          const response = await authAxios.post("/auth/login", {
+            email: credentials.email,
+            password: credentials.password,
+          });
 
-          const data: BackendLoginResponse = await response.json();
+          const data: BackendLoginResponse = response.data;
 
           return {
             id: data.user.id.toString(),
@@ -80,10 +79,47 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.accessToken = (user as { accessToken?: string }).accessToken;
         token.user = (user as { user?: SessionUser }).user as SessionUser;
+        return token;
       }
+
+      // Solo verificar si el token sigue siendo válido
+      if (token.accessToken) {
+        try {
+          // Hacer una verificación ligera del token usando /auth/me
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/me`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${token.accessToken}`,
+              },
+              timeout: 5000,
+            }
+          );
+
+          // Si la respuesta es exitosa, el token sigue siendo válido
+          if (response.status === 200) {
+            return token;
+          }
+        } catch (error) {
+          console.error('Token validation failed:', error);
+
+          // Si el token es inválido, marcar como expirado
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
+            console.log('Token expirado, marcando sesión como inválida');
+            (token as ExtendedJWT).expired = true;
+          }
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
+      // Si el token está marcado como expirado, no retornar sesión
+      if ((token as ExtendedJWT).expired) {
+        return {} as Session;
+      }
+
       session.accessToken = token.accessToken as string;
       session.user = token.user as SessionUser;
       return session;
@@ -91,43 +127,9 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin", // Redirigir errores al login
   },
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
-  jwt: {
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: false, // false para desarrollo local
-        maxAge: 24 * 60 * 60 // 24 horas
-      }
-    },
-    callbackUrl: {
-      name: `next-auth.callback-url`,
-      options: {
-        sameSite: 'lax',
-        path: '/',
-        secure: false,
-        maxAge: 24 * 60 * 60
-      }
-    },
-    csrfToken: {
-      name: `next-auth.csrf-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: false,
-        maxAge: 24 * 60 * 60
-      }
-    }
   },
 };

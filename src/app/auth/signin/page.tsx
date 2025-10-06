@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { clearAuthCookies } from '@/lib/auth-utils'
 import {
   Container,
   Paper,
@@ -39,9 +38,6 @@ export default function SignIn() {
     setError('')
 
     try {
-      // Limpiar cookies de sesiones anteriores ANTES del login
-      clearAuthCookies()
-      
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
@@ -51,7 +47,6 @@ export default function SignIn() {
       if (result?.error) {
         setError('Credenciales inválidas. Por favor, intenta de nuevo.')
       } else {
-        // Forzar recarga completa para evitar caché de NextAuth
         window.location.href = '/dashboard'
       }
     } catch {
