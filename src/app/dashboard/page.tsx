@@ -34,7 +34,8 @@ export default function Dashboard() {
     }
   }, [status, router])
 
-  const user = session?.user as SessionUser
+  // Ya no necesitamos el cast porque session.user está correctamente tipado
+  const user = session?.user
 
   if (status === 'loading') {
     return (
@@ -52,6 +53,44 @@ export default function Dashboard() {
     signOut({ callbackUrl: '/auth/signin' })
   }
 
+  // Función para obtener el nombre completo del usuario
+  const getUserFullName = (user: SessionUser | undefined): string => {
+    if (!user) {
+      return 'Usuario'
+    }
+    
+    const firstName = user.firstName?.trim() || ''
+    const lastName = user.lastName?.trim() || ''
+    
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`
+    } else if (firstName) {
+      return firstName
+    } else if (lastName) {
+      return lastName
+    } else if (user.email) {
+      const emailName = user.email.split('@')[0]
+      return emailName
+    } else {
+      return 'Usuario'
+    }
+  }
+
+  // Función para obtener el nombre corto para el header
+  const getUserShortName = (user: SessionUser | undefined): string => {
+    if (!user) return 'Usuario'
+    
+    const firstName = user.firstName?.trim() || ''
+    
+    if (firstName) {
+      return firstName
+    } else if (user.email) {
+      return user.email.split('@')[0]
+    } else {
+      return 'Usuario'
+    }
+  }
+
   return (
     <AppShell
       header={{ height: 70 }}
@@ -66,10 +105,10 @@ export default function Dashboard() {
           </Group>
           <Group>
             <Text size="sm">
-              {user?.firstName} {user?.lastName}
+              {getUserShortName(user)}
             </Text>
             <Badge variant="light" color="blue">
-              {user?.role}
+              {user?.role || 'Usuario'}
             </Badge>
             <ActionIcon
               onClick={() => toggleColorScheme()}
@@ -123,7 +162,7 @@ export default function Dashboard() {
                 <IconBuildingBank size={48} color="var(--mantine-color-blue-6)" />
               </Group>
               <Title order={1} ta="center" mb="md">
-                ¡Bienvenido, {user?.firstName} {user?.lastName}!
+                ¡Bienvenido, {getUserFullName(user)}!
               </Title>
               <Text ta="center" size="lg" c="dimmed">
                 Tienes acceso a {user?.sucursales?.length || 0} sucursales

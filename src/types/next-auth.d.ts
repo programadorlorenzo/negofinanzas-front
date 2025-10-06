@@ -1,19 +1,11 @@
 export interface SessionUser {
-  id: number;
+  id: string; // NextAuth necesita que el id sea string
   firstName: string;
   lastName: string;
   email: string;
   role: string;
   sucursales: string[];
   permissions: string[];
-}
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  accessToken: string;
-  user: SessionUser;
 }
 
 declare module 'next-auth' {
@@ -23,12 +15,8 @@ declare module 'next-auth' {
     user: SessionUser;
   }
 
-  interface User {
-    id: string;
-    email: string;
-    name: string;
+  interface User extends SessionUser {
     accessToken: string;
-    user: SessionUser;
   }
 }
 
@@ -36,6 +24,12 @@ declare module 'next-auth/jwt' {
   interface JWT {
     accessToken?: string;
     refreshToken?: string;
-    user?: SessionUser;
+    id?: string; // Cambiado a string para consistencia con NextAuth
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    role?: string;
+    sucursales?: string[];
+    permissions?: string[];
   }
 }
