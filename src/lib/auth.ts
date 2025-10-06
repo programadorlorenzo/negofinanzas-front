@@ -54,20 +54,19 @@ export const authOptions: NextAuthOptions = {
 
           const data: BackendLoginResponse = await response.json();
 
-          const authUser: SessionUser & { accessToken: string } = {
-            id: data.user.id.toString(), // Convertir a string para NextAuth
-            firstName: data.user.firstName,
-            lastName: data.user.lastName,
-            email: data.user.email,
-            role: data.user.role,
-            sucursales: data.user.sucursales,
-            permissions: data.user.permissions,
+          return {
+            id: data.user.id.toString(),
             accessToken: data.accessToken,
+            user: {
+              id: data.user.id,
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              email: data.user.email,
+              role: data.user.role,
+              sucursales: data.user.sucursales,
+              permissions: data.user.permissions,
+            } as SessionUser,
           };
-
-          console.log("Authenticated user:", authUser);
-
-          return authUser;
         } catch (error) {
           console.error("Error during authentication:", error);
           return null;
@@ -77,54 +76,16 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // SIEMPRE sobrescribir completamente con datos del usuario cuando hay un login
+      // En el login inicial
       if (user) {
-        // Crear un token completamente nuevo para evitar datos anteriores
-        const newToken = {
-          accessToken: user.accessToken,
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email || undefined,
-          role: user.role,
-          sucursales: user.sucursales,
-          permissions: user.permissions,
-          // Agregar timestamp para forzar actualización
-          iat: Math.floor(Date.now() / 1000),
-        };
-        return newToken;
+        token.accessToken = (user as { accessToken?: string }).accessToken;
+        token.user = (user as { user?: SessionUser }).user as SessionUser;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token.accessToken) {
-        session.accessToken = token.accessToken;
-      }
-
-      // Asegurar que todos los campos existan antes de mapear
-      if (token.id && token.firstName && token.lastName && token.email && token.role) {
-        session.user = {
-          id: token.id,
-          firstName: token.firstName,
-          lastName: token.lastName,
-          email: token.email,
-          role: token.role,
-          sucursales: token.sucursales || [],
-          permissions: token.permissions || [],
-        };
-      } else {
-        // Fallback si el token no tiene todos los datos
-        session.user = {
-          id: token.sub || "unknown",
-          firstName: token.firstName || "Usuario",
-          lastName: token.lastName || "",
-          email: token.email || "",
-          role: token.role || "USER",
-          sucursales: token.sucursales || [],
-          permissions: token.permissions || [],
-        };
-      }
-
+      session.accessToken = token.accessToken as string;
+      session.user = token.user as SessionUser;
       return session;
     },
   },
@@ -134,21 +95,8 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours
-    updateAge: 0, // Forzar actualización de sesión en cada request
   },
   jwt: {
     maxAge: 24 * 60 * 60, // 24 hours
-  },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: false, // false para desarrollo local
-        maxAge: 24 * 60 * 60 // 24 horas
-      }
-    }
   },
 };

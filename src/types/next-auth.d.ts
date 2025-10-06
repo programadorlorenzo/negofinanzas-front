@@ -1,5 +1,5 @@
 export interface SessionUser {
-  id: string; // NextAuth necesita que el id sea string
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -11,25 +11,18 @@ export interface SessionUser {
 declare module 'next-auth' {
   interface Session {
     accessToken?: string;
-    refreshToken?: string;
     user: SessionUser;
   }
 
-  interface User extends SessionUser {
-    accessToken: string;
+  interface User {
+    accessToken?: string;
+    user: SessionUser;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
     accessToken?: string;
-    refreshToken?: string;
-    id?: string; // Cambiado a string para consistencia con NextAuth
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    role?: string;
-    sucursales?: string[];
-    permissions?: string[];
+    user: SessionUser;
   }
 }
