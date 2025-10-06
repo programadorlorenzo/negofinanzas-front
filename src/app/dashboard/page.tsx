@@ -3,6 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { clearAuthCookies } from '@/lib/auth-utils'
 import {
   AppShell,
   Container,
@@ -46,7 +47,10 @@ export default function Dashboard() {
   }
 
   const handleSignOut = async () => {
-    // Limpiar completamente la sesión y redirigir
+    // Limpiar cookies manualmente ANTES del signOut oficial
+    clearAuthCookies()
+    
+    // Luego hacer el signOut oficial de NextAuth
     await signOut({ 
       callbackUrl: '/auth/signin',
       redirect: true 

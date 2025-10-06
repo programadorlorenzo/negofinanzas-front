@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { clearAuthCookies } from '@/lib/auth-utils'
 import {
   Container,
   Paper,
@@ -40,6 +41,9 @@ export default function SignIn() {
     setError('')
 
     try {
+      // Limpiar cookies de sesiones anteriores ANTES del login
+      clearAuthCookies()
+      
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
