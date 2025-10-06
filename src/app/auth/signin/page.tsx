@@ -8,7 +8,6 @@ import {
   TextInput,
   PasswordInput,
   Button,
-  Title,
   Text,
   Alert,
   Center,
@@ -84,9 +83,7 @@ export default function SignIn() {
     <Container size={420} my={40}>
       <Center style={{ height: '100vh' }}>
         <Paper withBorder shadow="md" p={30} mt={30} radius="md" style={{ width: '100%' }}>
-          <Title order={2} ta="center" mb="md">
-            NegoFinanzas
-          </Title>
+
           <Text ta="center" mb="xl" c="dimmed">
             Inicia sesión en tu cuenta
           </Text>
