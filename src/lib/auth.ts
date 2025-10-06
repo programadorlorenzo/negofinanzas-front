@@ -106,7 +106,6 @@ export const authOptions: NextAuthOptions = {
 
           // Si el token es inválido, marcar como expirado
           if (axios.isAxiosError(error) && error.response?.status === 401) {
-            console.log('Token expirado, marcando sesión como inválida');
             (token as ExtendedJWT).expired = true;
           }
         }
@@ -122,6 +121,7 @@ export const authOptions: NextAuthOptions = {
 
       session.accessToken = token.accessToken as string;
       session.user = token.user as SessionUser;
+      
       return session;
     },
   },
@@ -131,5 +131,10 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 horas
+    updateAge: 0, // Forzar actualización en cada request
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 horas
   },
 };

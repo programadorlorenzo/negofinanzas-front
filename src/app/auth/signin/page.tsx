@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, getSession, signOut } from 'next-auth/react'
 import {
   Container,
   Paper,
@@ -38,6 +38,26 @@ export default function SignIn() {
     setError('')
 
     try {
+      // Limpiar completamente cualquier sesión anterior
+      const cookieNames = [
+        'next-auth.session-token',
+        'next-auth.callback-url',
+        'next-auth.csrf-token',
+        '__Secure-next-auth.session-token',
+        '__Host-next-auth.csrf-token'
+      ];
+      
+      cookieNames.forEach(name => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
+      });
+      
+      await signOut({ redirect: false });
+      
+      // Pequeña pausa para asegurar limpieza
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
@@ -47,6 +67,10 @@ export default function SignIn() {
       if (result?.error) {
         setError('Credenciales inválidas. Por favor, intenta de nuevo.')
       } else {
+        // Forzar obtención de nueva sesión para evitar cache
+        await getSession();
+        
+        // Forzar recarga completa para evitar cualquier cache
         window.location.href = '/dashboard'
       }
     } catch {

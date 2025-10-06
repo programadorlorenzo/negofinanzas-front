@@ -7,15 +7,11 @@ export const useAuth = () => {
   // Función para cerrar sesión con limpieza ULTRA agresiva
   const signOut = async () => {
     try {
-      console.log('🚪 LOGOUT - Iniciando proceso de logout...');
-      
       // 1. Limpiar cache de sesión de axios INMEDIATAMENTE
-      console.log('🧹 LOGOUT - Limpiando cache de axios...');
       clearSessionCache();
       
       // 2. Limpiar todas las cookies de NextAuth manualmente
       if (typeof window !== 'undefined') {
-        console.log('🍪 LOGOUT - Limpiando cookies de NextAuth...');
         const cookieNames = [
           'next-auth.session-token',
           'next-auth.callback-url',
@@ -34,7 +30,6 @@ export const useAuth = () => {
         });
         
         // 3. Limpiar todo el almacenamiento
-        console.log('💾 LOGOUT - Limpiando localStorage y sessionStorage...');
         localStorage.clear();
         sessionStorage.clear();
         
@@ -47,7 +42,6 @@ export const useAuth = () => {
       }
       
       // 5. Cerrar sesión de NextAuth SIN redirección
-      console.log('🔐 LOGOUT - Ejecutando signOut de NextAuth...');
       await nextAuthSignOut({ 
         redirect: false,
         callbackUrl: '/auth/signin' 
@@ -57,11 +51,10 @@ export const useAuth = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       // 7. Forzar recarga COMPLETA de la página para eliminar cualquier cache
-      console.log('🔄 LOGOUT - Forzando recarga completa...');
       window.location.href = '/auth/signin';
       
     } catch (error) {
-      console.error('❌ LOGOUT - Error al cerrar sesión:', error);
+      console.error('Error al cerrar sesión:', error);
       // En caso de error, forzar recarga de todas formas
       window.location.href = '/auth/signin';
     }

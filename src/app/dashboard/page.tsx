@@ -27,19 +27,6 @@ export default function Dashboard() {
   const router = useRouter()
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
-  // DEBUG: Log para ver los datos del usuario
-  useEffect(() => {
-    if (session?.user) {
-      console.log('🔍 DASHBOARD - Datos del usuario:', {
-        firstName: session.user.firstName,
-        lastName: session.user.lastName,
-        email: session.user.email,
-        id: session.user.id,
-        fullSession: session
-      });
-    }
-  }, [session]);
-
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/auth/signin')
