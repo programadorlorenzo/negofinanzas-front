@@ -130,14 +130,6 @@ export default function Dashboard() {
               </Text>
             </Card>
 
-            {/* Título de Sucursales */}
-            <Group justify="space-between" align="center">
-              <Title order={2}>Tus Sucursales</Title>
-              <Badge color="blue" size="lg">
-                {user?.sucursales?.length || 0} Disponibles
-              </Badge>
-            </Group>
-
             {/* Lista de Sucursales */}
             {user?.sucursales && user.sucursales.length > 0 ? (
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
