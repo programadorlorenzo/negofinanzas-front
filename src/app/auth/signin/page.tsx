@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { clearAuthCookies } from '@/lib/auth-utils'
 import {
   Container,
@@ -23,7 +22,6 @@ import { IconAlertCircle } from '@tabler/icons-react'
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
 
   const form = useForm({
     initialValues: {
@@ -53,9 +51,8 @@ export default function SignIn() {
       if (result?.error) {
         setError('Credenciales inválidas. Por favor, intenta de nuevo.')
       } else {
-        await getSession()
-        router.push('/dashboard')
-        router.refresh()
+        // Forzar recarga completa para evitar caché de NextAuth
+        window.location.href = '/dashboard'
       }
     } catch {
       setError('Error al iniciar sesión. Por favor, intenta de nuevo.')
