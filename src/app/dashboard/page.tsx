@@ -95,13 +95,13 @@ export default function Dashboard() {
             NAVEGACIÓN
           </Text>
           <NavLink
-            href="#"
+            href="/dashboard"
             label="Inicio"
             leftSection={<IconHome size="1rem" stroke={1.5} />}
             active
           />
           <NavLink
-            href="#"
+            href="/sucursales"
             label="Sucursales"
             leftSection={<IconMapPin size="1rem" stroke={1.5} />}
           />
