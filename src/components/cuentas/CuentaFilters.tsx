@@ -49,7 +49,6 @@ const CuentaFiltersComponent = ({
             leftSection={<IconSearch size={16} />}
             value={filters.search || ''}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            disabled={loading}
           />
         </Grid.Col>
 
