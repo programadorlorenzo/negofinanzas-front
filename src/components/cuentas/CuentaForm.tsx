@@ -134,6 +134,14 @@ const CuentaFormComponent = ({
         disabled={loading}
       />
 
+      <Switch
+        label="Cuenta propia de la empresa"
+        description="Marcar si esta cuenta pertenece a la empresa (para usar como origen de pagos)"
+        checked={formData.propiaEmpresa || false}
+        onChange={(e) => updateFormData('propiaEmpresa', e.currentTarget.checked)}
+        disabled={loading}
+      />
+
       {isEditing && (
         <Switch
           label="Cuenta activa"
