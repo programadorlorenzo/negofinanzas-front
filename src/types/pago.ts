@@ -35,6 +35,20 @@ export interface Pago {
 		name: string;
 		code?: string;
 	};
+	cuentaDestinoId?: number;
+	cuentaDestino?: {
+		id: number;
+		nombre: string;
+		numero: string;
+		tipo: string;
+	};
+	cuentaPropiaEmpresaId?: number;
+	cuentaPropiaEmpresa?: {
+		id: number;
+		nombre: string;
+		numero: string;
+		tipo: string;
+	};
 	voucherFile?: FileResponse;
 	documentFiles?: FileResponse[];
 	createdAt: string;
@@ -48,6 +62,8 @@ export interface CreatePagoData {
 	total: number;
 	moneda: MonedaPago;
 	sucursalId?: number;
+	cuentaDestinoId?: number;
+	cuentaPropiaEmpresaId?: number;
 	voucherFileId?: number;
 	documentFileIds?: number[];
 }
@@ -61,6 +77,8 @@ export interface PagoFilters {
 	status?: StatusPago;
 	moneda?: MonedaPago;
 	sucursalId?: number;
+	cuentaDestinoId?: number;
+	cuentaPropiaEmpresaId?: number;
 	montoMin?: number;
 	montoMax?: number;
 	fechaDesde?: string;

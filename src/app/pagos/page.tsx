@@ -21,6 +21,7 @@ import { usePagoModals } from '@/components/pagos/PagoModals';
 import { PagosAPI } from '@/lib/api/pagos';
 import { Pago, PagoFilters, PaginatedPagosResponse } from '@/types/pago';
 import { SucursalesAPI } from '@/lib/api/sucursales';
+import { CuentasAPI } from '@/lib/api/cuentas';
 
 const initialFilters: PagoFilters = {
 	page: 1,
@@ -39,6 +40,7 @@ export default function PagosPage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [sucursales, setSucursales] = useState<Array<{ id: number; name: string; code?: string }>>([]);
+	const [cuentas, setCuentas] = useState<Array<{ id: number; titular: string; numeroCuenta: string; tipo: string }>>([]);
 
 	const fetchPagos = useCallback(async () => {
 		try {
@@ -69,8 +71,18 @@ export default function PagosPage() {
 		}
 	}, []);
 
+	const fetchCuentas = useCallback(async () => {
+		try {
+			const response = await CuentasAPI.getAll({ page: 1, limit: 100 });
+			setCuentas(response.data);
+		} catch (err) {
+			console.error('Error fetching cuentas:', err);
+		}
+	}, []);
+
 	const { openCreateModal, openEditModal, openViewModal, openDeleteModal, changeStatus } = usePagoModals({
 		sucursales,
+		cuentas,
 		onSuccess: fetchPagos,
 	});
 
@@ -81,6 +93,10 @@ export default function PagosPage() {
 	useEffect(() => {
 		fetchSucursales();
 	}, [fetchSucursales]);
+
+	useEffect(() => {
+		fetchCuentas();
+	}, [fetchCuentas]);
 
 	const handleFiltersChange = (newFilters: PagoFilters) => {
 		setFilters(newFilters);

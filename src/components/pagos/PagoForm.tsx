@@ -37,6 +37,8 @@ interface PagoFormData {
 	total: number;
 	moneda: MonedaPago;
 	sucursalId?: string;
+	cuentaDestinoId?: string;
+	cuentaPropiaEmpresaId?: string;
 	status?: StatusPago;
 }
 
@@ -45,6 +47,7 @@ interface PagoFormProps {
 	onSubmit: (data: CreatePagoData | UpdatePagoData) => Promise<void>;
 	onCancel: () => void;
 	sucursales: Array<{ id: number; name: string; code?: string }>;
+	cuentas: Array<{ id: number; titular: string; numeroCuenta: string; tipo: string; propiaEmpresa?: boolean }>;
 	loading?: boolean;
 	isEdit?: boolean;
 }
@@ -54,6 +57,7 @@ export const PagoForm = memo(function PagoForm({
 	onSubmit,
 	onCancel,
 	sucursales,
+	cuentas,
 	loading = false,
 	isEdit = false,
 }: PagoFormProps) {
@@ -74,6 +78,8 @@ export const PagoForm = memo(function PagoForm({
 			total: initialData?.total || 0,
 			moneda: initialData?.moneda || MonedaPago.PEN,
 			sucursalId: initialData?.sucursalId?.toString() || '',
+			cuentaDestinoId: initialData?.cuentaDestinoId?.toString() || '',
+			cuentaPropiaEmpresaId: initialData?.cuentaPropiaEmpresaId?.toString() || '',
 			...(isEdit && { status: initialData?.status || StatusPago.PENDIENTE }),
 		},
 		validate: {
@@ -100,6 +106,24 @@ export const PagoForm = memo(function PagoForm({
 			value: sucursal.id.toString(),
 			label: `${sucursal.name} ${sucursal.code ? `(${sucursal.code})` : ''}`.trim(),
 		})),
+	];
+
+	const cuentaDestinoOptions = [
+		{ value: '', label: 'Sin cuenta destino específica' },
+		...cuentas.map((cuenta) => ({
+			value: cuenta.id.toString(),
+			label: `${cuenta.titular} - ${cuenta.numeroCuenta} (${cuenta.tipo})`,
+		})),
+	];
+
+	const cuentaPropiaEmpresaOptions = [
+		{ value: '', label: 'Sin cuenta propia empresa' },
+		...cuentas
+			.filter((cuenta) => cuenta.propiaEmpresa === true)
+			.map((cuenta) => ({
+				value: cuenta.id.toString(),
+				label: `${cuenta.titular} - ${cuenta.numeroCuenta} (${cuenta.tipo})`,
+			})),
 	];
 
 	const handleVoucherUpload = async (file: File | null) => {
@@ -170,6 +194,8 @@ export const PagoForm = memo(function PagoForm({
 		const submitData = {
 			...values,
 			sucursalId: values.sucursalId && values.sucursalId !== '' ? Number(values.sucursalId) : undefined,
+			cuentaDestinoId: values.cuentaDestinoId && values.cuentaDestinoId !== '' ? Number(values.cuentaDestinoId) : undefined,
+			cuentaPropiaEmpresaId: values.cuentaPropiaEmpresaId && values.cuentaPropiaEmpresaId !== '' ? Number(values.cuentaPropiaEmpresaId) : undefined,
 			voucherFileId,
 			documentFileIds: documentFileIds.length > 0 ? documentFileIds : undefined,
 		} as CreatePagoData | UpdatePagoData;
@@ -237,6 +263,27 @@ export const PagoForm = memo(function PagoForm({
 							placeholder="Seleccionar sucursal"
 							data={sucursalOptions}
 							{...form.getInputProps('sucursalId')}
+							disabled={loading}
+						/>
+					</Grid.Col>
+				</Grid>
+
+				<Grid>
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<Select
+							label="Cuenta Destino"
+							placeholder="Seleccionar cuenta destino"
+							data={cuentaDestinoOptions}
+							{...form.getInputProps('cuentaDestinoId')}
+							disabled={loading}
+						/>
+					</Grid.Col>
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<Select
+							label="Cuenta Propia Empresa"
+							placeholder="Seleccionar cuenta propia empresa"
+							data={cuentaPropiaEmpresaOptions}
+							{...form.getInputProps('cuentaPropiaEmpresaId')}
 							disabled={loading}
 						/>
 					</Grid.Col>

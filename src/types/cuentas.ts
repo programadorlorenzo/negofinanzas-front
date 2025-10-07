@@ -22,6 +22,7 @@ export interface Cuenta {
   tipo?: TipoCuenta;
   banco?: string;
   esEmpresa?: boolean;
+  propiaEmpresa?: boolean;
   isActive?: boolean;
   createdBy?: number;
   sucursalId?: number;
@@ -49,6 +50,7 @@ export interface CreateCuentaDto {
   tipo?: TipoCuenta;
   banco?: string;
   esEmpresa?: boolean;
+  propiaEmpresa?: boolean;
   isActive?: boolean;
   sucursalId?: number;
 }
@@ -62,6 +64,7 @@ export interface UpdateCuentaDto {
   tipo?: TipoCuenta;
   banco?: string;
   esEmpresa?: boolean;
+  propiaEmpresa?: boolean;
   isActive?: boolean;
   sucursalId?: number;
 }
@@ -73,6 +76,7 @@ export interface CuentaFilters {
   tipo?: TipoCuenta;
   banco?: string;
   esEmpresa?: boolean;
+  propiaEmpresa?: boolean;
   isActive?: boolean;
   sucursalId?: number;
   page?: number;

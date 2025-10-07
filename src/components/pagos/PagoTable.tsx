@@ -119,6 +119,34 @@ export const PagoTable = memo(function PagoTable({
 				)}
 			</Table.Td>
 			<Table.Td>
+				{pago.cuentaDestino ? (
+					<Stack gap={4}>
+						<Text size="sm">{pago.cuentaDestino.nombre}</Text>
+						<Text size="xs" c="dimmed">
+							{pago.cuentaDestino.numero} ({pago.cuentaDestino.tipo})
+						</Text>
+					</Stack>
+				) : (
+					<Text size="sm" c="dimmed">
+						Sin cuenta destino
+					</Text>
+				)}
+			</Table.Td>
+			<Table.Td>
+				{pago.cuentaPropiaEmpresa ? (
+					<Stack gap={4}>
+						<Text size="sm">{pago.cuentaPropiaEmpresa.nombre}</Text>
+						<Text size="xs" c="dimmed">
+							{pago.cuentaPropiaEmpresa.numero} ({pago.cuentaPropiaEmpresa.tipo})
+						</Text>
+					</Stack>
+				) : (
+					<Text size="sm" c="dimmed">
+						Sin cuenta empresa
+					</Text>
+				)}
+			</Table.Td>
+			<Table.Td>
 				<Group gap={4}>
 					{pago.voucherFile && (
 						<Tooltip label="Ver voucher">
@@ -246,6 +274,8 @@ export const PagoTable = memo(function PagoTable({
 						<Table.Th>Monto</Table.Th>
 						<Table.Th>Estado</Table.Th>
 						<Table.Th>Sucursal</Table.Th>
+						<Table.Th>Cuenta Destino</Table.Th>
+						<Table.Th>Cuenta Empresa</Table.Th>
 						<Table.Th>Archivos</Table.Th>
 						<Table.Th>Fecha</Table.Th>
 						<Table.Th>Acciones</Table.Th>
@@ -254,7 +284,7 @@ export const PagoTable = memo(function PagoTable({
 				<Table.Tbody>
 					{loading ? (
 						<Table.Tr>
-							<Table.Td colSpan={8}>
+							<Table.Td colSpan={10}>
 								<Text ta="center" py="md">
 									Cargando...
 								</Text>
@@ -264,7 +294,7 @@ export const PagoTable = memo(function PagoTable({
 						rows
 					) : (
 						<Table.Tr>
-							<Table.Td colSpan={8}>
+							<Table.Td colSpan={10}>
 								<Text ta="center" py="md" c="dimmed">
 									No se encontraron pagos
 								</Text>

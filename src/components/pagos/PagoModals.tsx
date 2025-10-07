@@ -18,10 +18,11 @@ import { PagosAPI } from '@/lib/api/pagos';
 
 interface UsePagoModalsProps {
 	sucursales: Array<{ id: number; name: string; code?: string }>;
+	cuentas: Array<{ id: number; titular: string; numeroCuenta: string; tipo: string }>;
 	onSuccess: () => void;
 }
 
-export function usePagoModals({ sucursales, onSuccess }: UsePagoModalsProps) {
+export function usePagoModals({ sucursales, cuentas, onSuccess }: UsePagoModalsProps) {
 	const formatCurrency = (amount: number, currency: string) => {
 		const symbols = {
 			PEN: 'S/.',
@@ -72,6 +73,7 @@ export function usePagoModals({ sucursales, onSuccess }: UsePagoModalsProps) {
 					}}
 					onCancel={() => modals.closeAll()}
 					sucursales={sucursales}
+					cuentas={cuentas}
 				/>
 			),
 		});
@@ -105,6 +107,7 @@ export function usePagoModals({ sucursales, onSuccess }: UsePagoModalsProps) {
 					}}
 					onCancel={() => modals.closeAll()}
 					sucursales={sucursales}
+					cuentas={cuentas}
 				/>
 			),
 		});
