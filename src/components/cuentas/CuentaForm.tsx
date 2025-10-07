@@ -72,6 +72,13 @@ const CuentaFormComponent = ({
         disabled={loading}
         clearable
       />
+
+      <Switch
+        label="Cuenta de empresa"
+        checked={formData.esEmpresa || false}
+        onChange={(e) => updateFormData('esEmpresa', e.currentTarget.checked)}
+        disabled={loading}
+      />
       
       <Grid>
         <Grid.Col span={6}>
@@ -124,13 +131,6 @@ const CuentaFormComponent = ({
         placeholder="Nombre del banco"
         value={formData.banco || ''}
         onChange={(e) => updateFormData('banco', e.target.value)}
-        disabled={loading}
-      />
-
-      <Switch
-        label="Cuenta de empresa"
-        checked={formData.esEmpresa || false}
-        onChange={(e) => updateFormData('esEmpresa', e.currentTarget.checked)}
         disabled={loading}
       />
 

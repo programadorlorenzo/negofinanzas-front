@@ -169,12 +169,21 @@ const CuentaModalsComponent = ({
               </div>
             </SimpleGrid>
 
-            {selectedCuenta.esEmpresa && (
+            {(selectedCuenta.esEmpresa || selectedCuenta.propiaEmpresa) && (
               <>
                 <Divider />
-                <Badge variant="light" color="blue" size="lg">
-                  Cuenta de Empresa
-                </Badge>
+                <Stack gap="xs">
+                  {selectedCuenta.esEmpresa && (
+                    <Badge variant="light" color="blue" size="lg">
+                      Cuenta de Empresa
+                    </Badge>
+                  )}
+                  {selectedCuenta.propiaEmpresa && (
+                    <Badge variant="light" color="green" size="lg">
+                      Cuenta Propia de la Empresa
+                    </Badge>
+                  )}
+                </Stack>
               </>
             )}
 

@@ -76,6 +76,7 @@ const CuentaTableComponent = ({
             <Table.Th>Sucursal</Table.Th>
             <Table.Th>Tipo</Table.Th>
             <Table.Th>Moneda</Table.Th>
+            <Table.Th>Propia Empresa</Table.Th>
             <Table.Th>Estado</Table.Th>
             <Table.Th>Acciones</Table.Th>
           </Table.Tr>
@@ -96,6 +97,11 @@ const CuentaTableComponent = ({
               </Table.Td>
               <Table.Td>
                 {cuenta.moneda ? getMonedaLabel(cuenta.moneda) : '-'}
+              </Table.Td>
+              <Table.Td>
+                <Badge color={cuenta.propiaEmpresa ? 'blue' : 'gray'} variant="light">
+                  {cuenta.propiaEmpresa ? 'Sí' : 'No'}
+                </Badge>
               </Table.Td>
               <Table.Td>
                 <Badge color={cuenta.isActive ? 'green' : 'red'}>
