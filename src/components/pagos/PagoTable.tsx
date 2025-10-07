@@ -136,11 +136,31 @@ export const PagoTable = memo(function PagoTable({
 						</Tooltip>
 					)}
 					{pago.documentFiles && pago.documentFiles.length > 0 && (
-						<Tooltip label={`${pago.documentFiles.length} documento(s)`}>
-							<ActionIcon size="sm" variant="light" color="green">
-								<IconFileText size={14} />
-							</ActionIcon>
-						</Tooltip>
+						<Menu shadow="md" width={200}>
+							<Menu.Target>
+								<Tooltip label={`${pago.documentFiles.length} documento(s) - Click para ver`}>
+									<ActionIcon size="sm" variant="light" color="green">
+										<IconFileText size={14} />
+									</ActionIcon>
+								</Tooltip>
+							</Menu.Target>
+
+							<Menu.Dropdown>
+								<Menu.Label>Documentos</Menu.Label>
+								{pago.documentFiles.map((file) => (
+									<Menu.Item
+										key={file.id}
+										leftSection={<IconFileText size={14} />}
+										component="a"
+										href={getFileUrl(file.id)}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{file.originalName}
+									</Menu.Item>
+								))}
+							</Menu.Dropdown>
+						</Menu>
 					)}
 				</Group>
 			</Table.Td>

@@ -54,54 +54,6 @@ export default function Dashboard() {
           </Text>
         </Card>
 
-        {/* Cards de Estadísticas */}
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mb="md">
-              <Text size="sm" c="dimmed" fw={500}>
-                SUCURSALES ACTIVAS
-              </Text>
-              <IconBuildingBank size={32} stroke={1.5} color="var(--mantine-color-green-6)" />
-            </Group>
-            <Text size="xl" fw={700}>
-              {session.user.sucursales?.length || 0}
-            </Text>
-            <Text size="sm" c="dimmed">
-              Total de ubicaciones
-            </Text>
-          </Card>
-
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mb="md">
-              <Text size="sm" c="dimmed" fw={500}>
-                USUARIO ACTIVO
-              </Text>
-              <IconBuildingBank size={32} stroke={1.5} color="var(--mantine-color-blue-6)" />
-            </Group>
-            <Text size="xl" fw={700}>
-              {session.user.role || 'Usuario'}
-            </Text>
-            <Text size="sm" c="dimmed">
-              Rol del sistema
-            </Text>
-          </Card>
-
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" mb="md">
-              <Text size="sm" c="dimmed" fw={500}>
-                ESTADO
-              </Text>
-              <IconBuildingBank size={32} stroke={1.5} color="var(--mantine-color-green-6)" />
-            </Group>
-            <Text size="xl" fw={700}>
-              Activo
-            </Text>
-            <Text size="sm" c="dimmed">
-              Sistema operativo
-            </Text>
-          </Card>
-        </SimpleGrid>
-
         {/* Lista de Sucursales */}
         {session.user.sucursales && session.user.sucursales.length > 0 ? (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
