@@ -1,4 +1,4 @@
-import { IconHome, IconMapPin, IconChartBar, IconUsers, IconSettings, IconCreditCard } from '@tabler/icons-react';
+import { IconHome, IconMapPin, IconChartBar, IconUsers, IconSettings, IconCreditCard, IconCurrencyDollar } from '@tabler/icons-react';
 
 export interface MenuItem {
   id: string;
@@ -30,6 +30,13 @@ export const navigationMenu: MenuItem[] = [
     href: '/cuentas',
     icon: IconCreditCard,
     description: 'Gestión de cuentas bancarias',
+  },
+  {
+    id: 'pagos',
+    label: 'Pagos',
+    href: '/pagos',
+    icon: IconCurrencyDollar,
+    description: 'Gestión de pagos y vouchers',
   },
   {
     id: 'reportes',
