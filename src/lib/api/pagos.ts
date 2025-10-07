@@ -6,6 +6,7 @@ import {
 	PagoFilters,
 	PaginatedPagosResponse,
 	FileResponse,
+	StatusPago,
 } from '@/types/pago';
 
 export class PagosAPI {
@@ -41,6 +42,11 @@ export class PagosAPI {
 
 	static async delete(id: number): Promise<void> {
 		await apiClient.delete(`${this.baseUrl}/${id}`);
+	}
+
+	static async changeStatus(id: number, status: StatusPago): Promise<Pago> {
+		const response = await apiClient.patch(`${this.baseUrl}/${id}`, { status });
+		return response.data;
 	}
 }
 

@@ -1,9 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack } from '@mantine/core';
-import { IconEdit, IconTrash, IconEye, IconFileText } from '@tabler/icons-react';
-import { Pago, StatusPagoColors, StatusPagoLabels, MonedaPagoLabels } from '@/types/pago';
+import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack, Menu } from '@mantine/core';
+import { IconEdit, IconTrash, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard } from '@tabler/icons-react';
+import { Pago, StatusPagoColors, StatusPagoLabels, MonedaPagoLabels, StatusPago } from '@/types/pago';
 
 interface PagoTableProps {
 	pagos: Pago[];
@@ -11,6 +11,7 @@ interface PagoTableProps {
 	onEdit: (pago: Pago) => void;
 	onDelete: (pago: Pago) => void;
 	onView: (pago: Pago) => void;
+	onChangeStatus: (pago: Pago, newStatus: StatusPago) => void;
 }
 
 export const PagoTable = memo(function PagoTable({
@@ -19,6 +20,7 @@ export const PagoTable = memo(function PagoTable({
 	onEdit,
 	onDelete,
 	onView,
+	onChangeStatus,
 }: PagoTableProps) {
 	const formatCurrency = (amount: number, currency: string) => {
 		const symbols = {
@@ -40,6 +42,32 @@ export const PagoTable = memo(function PagoTable({
 
 	const getFileUrl = (fileId: number) => {
 		return `${process.env.NEXT_PUBLIC_API_URL}/files/${fileId}`;
+	};
+
+	const getStatusIcon = (status: StatusPago) => {
+		switch (status) {
+			case StatusPago.PENDIENTE:
+				return <IconClock size={14} />;
+			case StatusPago.APROBADO:
+				return <IconCheck size={14} />;
+			case StatusPago.RECHAZADO:
+				return <IconX size={14} />;
+			case StatusPago.PAGADO:
+				return <IconCreditCard size={14} />;
+			default:
+				return <IconClock size={14} />;
+		}
+	};
+
+	const getStatusChangeOptions = (currentStatus: StatusPago) => {
+		const allStatuses = [
+			{ status: StatusPago.PENDIENTE, label: StatusPagoLabels[StatusPago.PENDIENTE], color: StatusPagoColors[StatusPago.PENDIENTE] },
+			{ status: StatusPago.APROBADO, label: StatusPagoLabels[StatusPago.APROBADO], color: StatusPagoColors[StatusPago.APROBADO] },
+			{ status: StatusPago.RECHAZADO, label: StatusPagoLabels[StatusPago.RECHAZADO], color: StatusPagoColors[StatusPago.RECHAZADO] },
+			{ status: StatusPago.PAGADO, label: StatusPagoLabels[StatusPago.PAGADO], color: StatusPagoColors[StatusPago.PAGADO] },
+		];
+		
+		return allStatuses.filter(item => item.status !== currentStatus);
 	};
 
 	const rows = pagos.map((pago) => (
@@ -143,6 +171,35 @@ export const PagoTable = memo(function PagoTable({
 							<IconEdit size={14} />
 						</ActionIcon>
 					</Tooltip>
+					
+					<Menu shadow="md" width={200}>
+						<Menu.Target>
+							<Tooltip label="Cambiar estado">
+								<ActionIcon
+									size="sm"
+									variant="light"
+									color="grape"
+									disabled={loading}
+								>
+									<IconDots size={14} />
+								</ActionIcon>
+							</Tooltip>
+						</Menu.Target>
+
+						<Menu.Dropdown>
+							<Menu.Label>Cambiar estado</Menu.Label>
+							{getStatusChangeOptions(pago.status).map((option) => (
+								<Menu.Item
+									key={option.status}
+									leftSection={getStatusIcon(option.status)}
+									onClick={() => onChangeStatus(pago, option.status)}
+								>
+									{option.label}
+								</Menu.Item>
+							))}
+						</Menu.Dropdown>
+					</Menu>
+
 					<Tooltip label="Eliminar">
 						<ActionIcon
 							size="sm"

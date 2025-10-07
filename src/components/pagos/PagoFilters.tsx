@@ -52,7 +52,6 @@ export const PagoFiltersComponent = memo(function PagoFiltersComponent({
 					value={filters.search || ''}
 					onChange={(e) => handleFilterChange('search', e.target.value)}
 					leftSection={<IconSearch size={16} />}
-					disabled={loading}
 				/>
 			</Grid.Col>
 

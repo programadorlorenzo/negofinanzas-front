@@ -11,6 +11,7 @@ import {
 	StatusPagoLabels,
 	MonedaPagoLabels,
 	StatusPagoColors,
+	StatusPago,
 } from '@/types/pago';
 import { PagoForm } from './PagoForm';
 import { PagosAPI } from '@/lib/api/pagos';
@@ -273,10 +274,44 @@ export function usePagoModals({ sucursales, onSuccess }: UsePagoModalsProps) {
 		});
 	};
 
+	const changeStatus = async (pago: Pago, newStatus: StatusPago) => {
+		modals.openConfirmModal({
+			title: 'Cambiar Estado del Pago',
+			children: (
+				<Stack gap="sm">
+					<Text size="sm" component="span">
+						¿Estás seguro de que quieres cambiar el estado del pago <strong>#{pago.id}</strong> a{' '}
+						<Badge color={StatusPagoColors[newStatus]}>{StatusPagoLabels[newStatus]}</Badge>?
+					</Text>
+				</Stack>
+			),
+			labels: { confirm: 'Cambiar Estado', cancel: 'Cancelar' },
+			confirmProps: { color: 'blue' },
+			onConfirm: async () => {
+				try {
+					await PagosAPI.changeStatus(pago.id, newStatus);
+					notifications.show({
+						title: 'Éxito',
+						message: 'Estado del pago actualizado correctamente',
+						color: 'green',
+					});
+					onSuccess();
+				} catch {
+					notifications.show({
+						title: 'Error',
+						message: 'Error al cambiar el estado del pago',
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
+
 	return {
 		openCreateModal,
 		openEditModal,
 		openViewModal,
 		openDeleteModal,
+		changeStatus,
 	};
 }

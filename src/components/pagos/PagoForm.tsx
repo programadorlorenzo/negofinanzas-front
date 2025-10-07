@@ -29,6 +29,17 @@ import {
 } from '@/types/pago';
 import { FilesAPI } from '@/lib/api/pagos';
 
+// Tipo específico para el formulario donde sucursalId es string para el Select
+interface PagoFormData {
+	descripcion: string;
+	justificacion?: string;
+	coordinadoCon?: string;
+	total: number;
+	moneda: MonedaPago;
+	sucursalId?: string;
+	status?: StatusPago;
+}
+
 interface PagoFormProps {
 	initialData?: Pago;
 	onSubmit: (data: CreatePagoData | UpdatePagoData) => Promise<void>;
@@ -55,14 +66,14 @@ export const PagoForm = memo(function PagoForm({
 		initialData?.documentFiles?.map((file) => file.id) || []
 	);
 
-	const form = useForm<CreatePagoData | UpdatePagoData>({
+	const form = useForm<PagoFormData>({
 		initialValues: {
 			descripcion: initialData?.descripcion || '',
 			justificacion: initialData?.justificacion || '',
 			coordinadoCon: initialData?.coordinadoCon || '',
 			total: initialData?.total || 0,
 			moneda: initialData?.moneda || MonedaPago.PEN,
-			sucursalId: initialData?.sucursalId || undefined,
+			sucursalId: initialData?.sucursalId?.toString() || '',
 			...(isEdit && { status: initialData?.status || StatusPago.PENDIENTE }),
 		},
 		validate: {
@@ -155,13 +166,13 @@ export const PagoForm = memo(function PagoForm({
 		setDocumentFileIds(newDocumentFileIds);
 	};
 
-	const handleSubmit = async (values: CreatePagoData | UpdatePagoData) => {
+	const handleSubmit = async (values: PagoFormData) => {
 		const submitData = {
 			...values,
-			sucursalId: values.sucursalId ? Number(values.sucursalId) : undefined,
+			sucursalId: values.sucursalId && values.sucursalId !== '' ? Number(values.sucursalId) : undefined,
 			voucherFileId,
 			documentFileIds: documentFileIds.length > 0 ? documentFileIds : undefined,
-		};
+		} as CreatePagoData | UpdatePagoData;
 
 		await onSubmit(submitData);
 	};
