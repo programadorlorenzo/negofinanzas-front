@@ -1,4 +1,4 @@
-import { IconHome, IconMapPin, IconChartBar, IconUsers, IconSettings } from '@tabler/icons-react';
+import { IconHome, IconMapPin, IconChartBar, IconUsers, IconSettings, IconCreditCard } from '@tabler/icons-react';
 
 export interface MenuItem {
   id: string;
@@ -23,6 +23,13 @@ export const navigationMenu: MenuItem[] = [
     href: '/sucursales',
     icon: IconMapPin,
     description: 'Gestión de sucursales',
+  },
+  {
+    id: 'cuentas',
+    label: 'Cuentas',
+    href: '/cuentas',
+    icon: IconCreditCard,
+    description: 'Gestión de cuentas bancarias',
   },
   {
     id: 'reportes',
@@ -51,7 +58,9 @@ export const navigationMenu: MenuItem[] = [
 ];
 
 // Función para obtener elementos del menú filtrados por permisos
-export const getMenuItems = (_userPermissions?: string[]): MenuItem[] => {
+export const getMenuItems = (userPermissions?: string[]): MenuItem[] => {
   // Por ahora retornamos todos los elementos, pero aquí se puede filtrar por permisos
+  // En el futuro se puede usar userPermissions para filtrar
+  console.log('User permissions:', userPermissions); // Para evitar el warning, se usará más adelante
   return navigationMenu.filter(item => !item.disabled);
 };

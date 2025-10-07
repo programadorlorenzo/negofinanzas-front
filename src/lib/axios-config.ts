@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 
 // Crear instancia de axios
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   timeout: 10000,
 });
 
@@ -46,6 +46,8 @@ export const clearSessionCache = () => {
 // Interceptor para agregar token automáticamente
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    console.log('Making request to:', `${config.baseURL || ''}${config.url || ''}`);
+    
     // Solo en el cliente
     if (typeof window !== 'undefined') {
       const token = await getCachedSession();
@@ -57,6 +59,7 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -65,6 +68,14 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      baseURL: error.config?.baseURL
+    });
+    
     if (error.response?.status === 401) {
       // En caso de error 401, NextAuth manejará la redirección
       console.warn('Token expirado o inválido');

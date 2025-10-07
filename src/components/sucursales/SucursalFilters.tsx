@@ -1,15 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { 
   Paper, 
   Group, 
   TextInput, 
   Select, 
-  Button, 
   Stack 
 } from '@mantine/core';
-import { IconSearch, IconFilterOff } from '@tabler/icons-react';
+import { IconSearch } from '@tabler/icons-react';
 import { SucursalFilters } from '@/types/sucursales';
 
 interface SucursalFiltersProps {
@@ -18,34 +17,23 @@ interface SucursalFiltersProps {
   loading?: boolean;
 }
 
-export function SucursalFiltersComponent({ 
+const SucursalFiltersComponentBase = ({ 
   filters, 
   onFiltersChange, 
   loading = false 
-}: SucursalFiltersProps) {
-  const [localFilters, setLocalFilters] = useState<SucursalFilters>(filters);
+}: SucursalFiltersProps) => {
+  const [localName, setLocalName] = useState(filters.name || '');
 
-  const handleFilterChange = (key: keyof SucursalFilters, value: string | number | boolean | undefined | null) => {
-    const newFilters = { ...localFilters, [key]: value };
-    setLocalFilters(newFilters);
+  const handleNameChange = (value: string) => {
+    setLocalName(value);
+    const newFilters = { ...filters, name: value || undefined, page: 1 };
     onFiltersChange(newFilters);
   };
 
-  const handleClearFilters = () => {
-    const clearedFilters: SucursalFilters = {
-      page: 1,
-      limit: filters.limit || 10,
-      sortBy: 'name',
-      sortOrder: 'ASC'
-    };
-    setLocalFilters(clearedFilters);
-    onFiltersChange(clearedFilters);
+  const handleFilterChange = (key: keyof SucursalFilters, value: string | number | boolean | undefined | null) => {
+    const newFilters = { ...filters, [key]: value, page: 1 };
+    onFiltersChange(newFilters);
   };
-
-  const hasActiveFilters = !!(
-    localFilters.name || 
-    localFilters.isActive !== undefined
-  );
 
   return (
     <Paper p="md" shadow="sm" mb="md">
@@ -53,15 +41,14 @@ export function SucursalFiltersComponent({
         <Group grow>
           <TextInput
             placeholder="Buscar por nombre..."
-            value={localFilters.name || ''}
-            onChange={(event) => handleFilterChange('name', event.currentTarget.value)}
+            value={localName}
+            onChange={(event) => handleNameChange(event.currentTarget.value)}
             leftSection={<IconSearch size={16} />}
-            disabled={loading}
           />
           
           <Select
             placeholder="Estado"
-            value={localFilters.isActive?.toString() || ''}
+            value={filters.isActive?.toString() || ''}
             onChange={(value) => {
               if (value === '') {
                 handleFilterChange('isActive', undefined);
@@ -77,45 +64,11 @@ export function SucursalFiltersComponent({
             disabled={loading}
             clearable
           />
-
-          <Select
-            placeholder="Ordenar por"
-            value={localFilters.sortBy || 'name'}
-            onChange={(value) => handleFilterChange('sortBy', value)}
-            data={[
-              { value: 'name', label: 'Nombre' },
-              { value: 'code', label: 'Código' },
-              { value: 'createdAt', label: 'Fecha de creación' },
-              { value: 'updatedAt', label: 'Última actualización' },
-            ]}
-            disabled={loading}
-          />
-
-          <Select
-            placeholder="Orden"
-            value={localFilters.sortOrder || 'ASC'}
-            onChange={(value) => handleFilterChange('sortOrder', value)}
-            data={[
-              { value: 'ASC', label: 'Ascendente' },
-              { value: 'DESC', label: 'Descendente' },
-            ]}
-            disabled={loading}
-          />
         </Group>
-
-        {hasActiveFilters && (
-          <Group justify="flex-end">
-            <Button
-              variant="light"
-              leftSection={<IconFilterOff size={16} />}
-              onClick={handleClearFilters}
-              disabled={loading}
-            >
-              Limpiar filtros
-            </Button>
-          </Group>
-        )}
       </Stack>
     </Paper>
   );
-}
+};
+
+// Memorizar el componente para evitar re-renders innecesarios
+export const SucursalFiltersComponent = memo(SucursalFiltersComponentBase);
