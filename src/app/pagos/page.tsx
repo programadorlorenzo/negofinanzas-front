@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-	Container,
 	Title,
 	Button,
 	Stack,
@@ -111,7 +110,7 @@ export default function PagosPage() {
 	};
 
 	return (
-		<Container size="xl" py="md">
+		<Box px="xs" py="md">
 			<Stack gap="lg">
 				{/* Header */}
 				<Group justify="space-between">
@@ -202,6 +201,6 @@ export default function PagosPage() {
 					</Card>
 				)}
 			</Stack>
-		</Container>
+		</Box>
 	);
 }

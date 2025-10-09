@@ -72,37 +72,37 @@ export const PagoTable = memo(function PagoTable({
 
 	const rows = pagos.map((pago) => (
 		<Table.Tr key={pago.id}>
-			<Table.Td>
-				<Text size="sm" fw={500}>
+			<Table.Td style={{ padding: '8px' }}>
+				<Text size="xs" fw={500}>
 					#{pago.id}
 				</Text>
 			</Table.Td>
-			<Table.Td>
-				<Stack gap={4}>
-					<Text size="sm" fw={500} lineClamp={2}>
+			<Table.Td style={{ padding: '8px' }}>
+				<Stack gap={2}>
+					<Text size="xs" fw={500} lineClamp={2}>
 						{pago.descripcion}
 					</Text>
 					{pago.coordinadoCon && (
-						<Text size="xs" c="dimmed">
+						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 							Coordinado con: {pago.coordinadoCon}
 						</Text>
 					)}
 				</Stack>
 			</Table.Td>
-			<Table.Td>
-				<Text size="sm" fw={600}>
+			<Table.Td style={{ padding: '8px' }}>
+				<Text size="xs" fw={600}>
 					{formatCurrency(pago.total, pago.moneda)}
 				</Text>
-				<Text size="xs" c="dimmed">
+				<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 					{MonedaPagoLabels[pago.moneda]}
 				</Text>
 			</Table.Td>
-			<Table.Td>
-				<Badge color={StatusPagoColors[pago.status]} variant="light">
+			<Table.Td style={{ padding: '8px' }}>
+				<Badge color={StatusPagoColors[pago.status]} variant="light" size="xs">
 					{StatusPagoLabels[pago.status]}
 				</Badge>
 			</Table.Td>
-			<Table.Td>
+			<Table.Td style={{ padding: '8px' }}>
 				{pago.sucursal ? (
 					<Stack gap={4}>
 						<Text size="sm">{pago.sucursal.name}</Text>
@@ -118,40 +118,40 @@ export const PagoTable = memo(function PagoTable({
 					</Text>
 				)}
 			</Table.Td>
-			<Table.Td>
+			<Table.Td style={{ padding: '8px' }}>
 				{pago.cuentaDestino ? (
-					<Stack gap={4}>
-						<Text size="sm">{pago.cuentaDestino.nombre}</Text>
-						<Text size="xs" c="dimmed">
+					<Stack gap={2}>
+						<Text size="xs">{pago.cuentaDestino.nombre}</Text>
+						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 							{pago.cuentaDestino.numero} ({pago.cuentaDestino.tipo})
 						</Text>
 					</Stack>
 				) : (
-					<Text size="sm" c="dimmed">
+					<Text size="xs" c="dimmed">
 						Sin cuenta destino
 					</Text>
 				)}
 			</Table.Td>
-			<Table.Td>
+			<Table.Td style={{ padding: '8px' }}>
 				{pago.cuentaPropiaEmpresa ? (
-					<Stack gap={4}>
-						<Text size="sm">{pago.cuentaPropiaEmpresa.nombre}</Text>
-						<Text size="xs" c="dimmed">
+					<Stack gap={2}>
+						<Text size="xs">{pago.cuentaPropiaEmpresa.nombre}</Text>
+						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 							{pago.cuentaPropiaEmpresa.numero} ({pago.cuentaPropiaEmpresa.tipo})
 						</Text>
 					</Stack>
 				) : (
-					<Text size="sm" c="dimmed">
+					<Text size="xs" c="dimmed">
 						Sin cuenta empresa
 					</Text>
 				)}
 			</Table.Td>
-			<Table.Td>
-				<Group gap={4}>
+			<Table.Td style={{ padding: '8px' }}>
+				<Group gap={2}>
 					{pago.voucherFile && (
 						<Tooltip label="Ver voucher">
 							<ActionIcon
-								size="sm"
+								size="xs"
 								variant="light"
 								color="blue"
 								component="a"
@@ -159,7 +159,7 @@ export const PagoTable = memo(function PagoTable({
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<IconEye size={14} />
+								<IconEye size={12} />
 							</ActionIcon>
 						</Tooltip>
 					)}
@@ -167,22 +167,23 @@ export const PagoTable = memo(function PagoTable({
 						<Menu shadow="md" width={200}>
 							<Menu.Target>
 								<Tooltip label={`${pago.documentFiles.length} documento(s) - Click para ver`}>
-									<ActionIcon size="sm" variant="light" color="green">
-										<IconFileText size={14} />
+									<ActionIcon size="xs" variant="light" color="green">
+										<IconFileText size={12} />
 									</ActionIcon>
 								</Tooltip>
 							</Menu.Target>
 
 							<Menu.Dropdown>
-								<Menu.Label>Documentos</Menu.Label>
+								<Menu.Label style={{ fontSize: '11px' }}>Documentos</Menu.Label>
 								{pago.documentFiles.map((file) => (
 									<Menu.Item
 										key={file.id}
-										leftSection={<IconFileText size={14} />}
+										leftSection={<IconFileText size={12} />}
 										component="a"
 										href={getFileUrl(file.id)}
 										target="_blank"
 										rel="noopener noreferrer"
+										style={{ fontSize: '11px' }}
 									>
 										{file.originalName}
 									</Menu.Item>
@@ -192,31 +193,31 @@ export const PagoTable = memo(function PagoTable({
 					)}
 				</Group>
 			</Table.Td>
-			<Table.Td>
-				<Text size="sm">{formatDate(pago.createdAt)}</Text>
+			<Table.Td style={{ padding: '8px' }}>
+				<Text size="xs">{formatDate(pago.createdAt)}</Text>
 			</Table.Td>
-			<Table.Td>
-				<Group gap={4}>
+			<Table.Td style={{ padding: '8px' }}>
+				<Group gap={2}>
 					<Tooltip label="Ver detalles">
 						<ActionIcon
-							size="sm"
+							size="xs"
 							variant="light"
 							color="blue"
 							onClick={() => onView(pago)}
 							disabled={loading}
 						>
-							<IconEye size={14} />
+							<IconEye size={12} />
 						</ActionIcon>
 					</Tooltip>
 					<Tooltip label="Editar">
 						<ActionIcon
-							size="sm"
+							size="xs"
 							variant="light"
 							color="yellow"
 							onClick={() => onEdit(pago)}
 							disabled={loading}
 						>
-							<IconEdit size={14} />
+							<IconEdit size={12} />
 						</ActionIcon>
 					</Tooltip>
 					
@@ -224,23 +225,24 @@ export const PagoTable = memo(function PagoTable({
 						<Menu.Target>
 							<Tooltip label="Cambiar estado">
 								<ActionIcon
-									size="sm"
+									size="xs"
 									variant="light"
 									color="grape"
 									disabled={loading}
 								>
-									<IconDots size={14} />
+									<IconDots size={12} />
 								</ActionIcon>
 							</Tooltip>
 						</Menu.Target>
 
 						<Menu.Dropdown>
-							<Menu.Label>Cambiar estado</Menu.Label>
+							<Menu.Label style={{ fontSize: '11px' }}>Cambiar estado</Menu.Label>
 							{getStatusChangeOptions(pago.status).map((option) => (
 								<Menu.Item
 									key={option.status}
 									leftSection={getStatusIcon(option.status)}
 									onClick={() => onChangeStatus(pago, option.status)}
+									style={{ fontSize: '11px' }}
 								>
 									{option.label}
 								</Menu.Item>
@@ -250,13 +252,13 @@ export const PagoTable = memo(function PagoTable({
 
 					<Tooltip label="Eliminar">
 						<ActionIcon
-							size="sm"
+							size="xs"
 							variant="light"
 							color="red"
 							onClick={() => onDelete(pago)}
 							disabled={loading}
 						>
-							<IconTrash size={14} />
+							<IconTrash size={12} />
 						</ActionIcon>
 					</Tooltip>
 				</Group>
@@ -266,22 +268,22 @@ export const PagoTable = memo(function PagoTable({
 
 	return (
 		<Table.ScrollContainer minWidth={1200}>
-			<Table striped highlightOnHover>
+			<Table striped highlightOnHover style={{ fontSize: '12px' }}>
 				<Table.Thead>
 					<Table.Tr>
-						<Table.Th>ID</Table.Th>
-						<Table.Th>Descripción</Table.Th>
-						<Table.Th>Monto</Table.Th>
-						<Table.Th>Estado</Table.Th>
-						<Table.Th>Sucursal</Table.Th>
-						<Table.Th>Cuenta Destino</Table.Th>
-						<Table.Th>Cuenta Empresa</Table.Th>
-						<Table.Th>Archivos</Table.Th>
-						<Table.Th>Fecha</Table.Th>
-						<Table.Th>Acciones</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>ID</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Descripción</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Monto</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Sucursal</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Destino</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Empresa</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Archivos</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Fecha</Table.Th>
+						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Acciones</Table.Th>
 					</Table.Tr>
 				</Table.Thead>
-				<Table.Tbody>
+				<Table.Tbody style={{ fontSize: '11px' }}>
 					{loading ? (
 						<Table.Tr>
 							<Table.Td colSpan={10}>
