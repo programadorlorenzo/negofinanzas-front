@@ -17,6 +17,6 @@ jobs:
       - name: Desplegar a HwPeru v2
         run: |
           sudo sshpass -p 'nodejs' rsync -r --exclude 'node_modules/' --exclude '.next/' . root@15.235.16.194:/data \
-            -e "ssh -p 50004 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-          sudo sshpass -p 'nodejs' ssh -o StrictHostKeyChecking=no root@15.235.16.194 -p 50004 \
+            -e "ssh -p 50005 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          sudo sshpass -p 'nodejs' ssh -o StrictHostKeyChecking=no root@15.235.16.194 -p 50005 \
             "cd /data && npm install -g pnpm && pnpm i && pnpm run build && (pm2 describe consorcio-front > /dev/null && pm2 restart consorcio-front || pm2 start ecosystem.config.js)"
