@@ -1,10 +1,26 @@
 module.exports = {
   apps: [
     {
-      watch: true,
       name: 'negofinanzas-front',
       script: 'pnpm run start',
-      ignore_watch: ['node_modules', '.next', 'temp'],
+      // Deshabilitar watch en producción para evitar ENOSPC
+      watch: false,
+      // Configuración de producción
+      env: {
+        NODE_ENV: 'production',
+      },
+      // Configuración de logs
+      log_file: './logs/app.log',
+      out_file: './logs/out.log',
+      error_file: './logs/error.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      // Configuración de instancias
+      instances: 1,
+      exec_mode: 'fork',
+      // Auto restart
+      autorestart: true,
+      max_restarts: 10,
+      min_uptime: '10s',
     },
   ],
 };
