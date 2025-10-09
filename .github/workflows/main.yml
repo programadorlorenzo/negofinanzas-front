@@ -22,6 +22,5 @@ jobs:
             "cd /data && \
              npm install -g pnpm && \
              pnpm i && \
-             cp .env.production .env.local && \
              pnpm run build && \
              (pm2 describe negofinanzas-front > /dev/null && pm2 restart negofinanzas-front || pm2 start ecosystem.config.js)"
