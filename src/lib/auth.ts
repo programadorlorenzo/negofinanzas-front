@@ -40,9 +40,18 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
+          // Debug: verificar variables de entorno
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+          console.log("🔍 API URL being used:", apiUrl);
+          console.log("🔍 All env vars:", {
+            NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+            NODE_ENV: process.env.NODE_ENV,
+            NEXTAUTH_URL: process.env.NEXTAUTH_URL
+          });
+
           // Crear instancia de axios específica para autenticación
           const authAxios = axios.create({
-            baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+            baseURL: apiUrl,
             timeout: 10000,
           });
 
@@ -85,9 +94,12 @@ export const authOptions: NextAuthOptions = {
       // Solo verificar si el token sigue siendo válido
       if (token.accessToken) {
         try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+          console.log("🔍 JWT callback API URL:", apiUrl);
+          
           // Hacer una verificación ligera del token usando /auth/me
           const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/me`,
+            `${apiUrl}/auth/me`,
             {},
             {
               headers: {

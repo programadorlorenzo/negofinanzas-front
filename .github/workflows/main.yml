@@ -22,5 +22,6 @@ jobs:
             "cd /data && \
              npm install -g pnpm && \
              pnpm i && \
-             pnpm run build && \
+             rm -rf .next && \
+             NEXT_PUBLIC_API_URL=https://back-finanzas.negolorenzo.pe NEXTAUTH_URL=https://finanzas.negolorenzo.pe NEXTAUTH_SECRET=secretprod4333 pnpm run build && \
              (pm2 describe negofinanzas-front > /dev/null && pm2 restart negofinanzas-front || pm2 start ecosystem.config.js)"

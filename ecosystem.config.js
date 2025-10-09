@@ -5,9 +5,12 @@ module.exports = {
       script: 'pnpm run start',
       // Deshabilitar watch en producción para evitar ENOSPC
       watch: false,
-      // Configuración de producción
+      // Configuración de producción con variables de entorno explícitas
       env: {
         NODE_ENV: 'production',
+        NEXTAUTH_URL: 'https://finanzas.negolorenzo.pe',
+        NEXTAUTH_SECRET: 'secretprod4333',
+        NEXT_PUBLIC_API_URL: 'https://back-finanzas.negolorenzo.pe',
       },
       // Configuración de logs
       log_file: './logs/app.log',
