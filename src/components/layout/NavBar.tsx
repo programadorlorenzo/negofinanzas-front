@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { Stack, Text, UnstyledButton, Group, Box } from '@mantine/core';
 import { getMenuItems } from '@/config/menu';
 import { useActiveRoute } from '@/hooks/useActiveRoute';
+import { useAuth } from '@/hooks/useAuth';
 import classes from './NavBar.module.css';
 
-interface NavBarProps {
-  userPermissions?: string[];
-}
-
-const NavBarComponent = ({ userPermissions }: NavBarProps) => {
+const NavBarComponent = () => {
   const { isActive } = useActiveRoute();
-  const menuItems = getMenuItems(userPermissions);
+  const { user } = useAuth();
+  const menuItems = getMenuItems(user?.role, user?.permissions);
 
   return (
     <Stack gap="xs" p="md">

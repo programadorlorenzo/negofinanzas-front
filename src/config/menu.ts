@@ -7,6 +7,7 @@ export interface MenuItem {
   icon: React.ComponentType<{ size?: string | number; stroke?: number; }>;
   description?: string;
   disabled?: boolean;
+  requiredRoles?: string[]; // Roles requeridos para ver este item
 }
 
 export const navigationMenu: MenuItem[] = [
@@ -23,6 +24,7 @@ export const navigationMenu: MenuItem[] = [
     href: '/sucursales',
     icon: IconMapPin,
     description: 'Gestión de sucursales',
+    requiredRoles: ['superadmin', 'admin'],
   },
   {
     id: 'cuentas',
@@ -64,10 +66,20 @@ export const navigationMenu: MenuItem[] = [
   },
 ];
 
-// Función para obtener elementos del menú filtrados por permisos
-export const getMenuItems = (userPermissions?: string[]): MenuItem[] => {
-  // Por ahora retornamos todos los elementos, pero aquí se puede filtrar por permisos
-  // En el futuro se puede usar userPermissions para filtrar
-  console.log('User permissions:', userPermissions); // Para evitar el warning, se usará más adelante
-  return navigationMenu.filter(item => !item.disabled);
+// Función para obtener elementos del menú filtrados por permisos y roles
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getMenuItems = (userRole?: string, userPermissions?: string[]): MenuItem[] => {
+  // Filtrar por elementos no deshabilitados y por roles
+  return navigationMenu.filter(item => {
+    // Si está deshabilitado, no mostrar
+    if (item.disabled) return false;
+    
+    // Si requiere roles específicos, verificar que el usuario tenga uno de esos roles
+    if (item.requiredRoles && item.requiredRoles.length > 0) {
+      return userRole && item.requiredRoles.includes(userRole);
+    }
+    
+    // Si no tiene restricciones de roles, mostrar
+    return true;
+  });
 };

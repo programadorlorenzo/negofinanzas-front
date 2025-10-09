@@ -39,7 +39,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </AppShell.Header>
 
       <AppShell.Navbar>
-        <NavBar userPermissions={session.user?.permissions} />
+        <NavBar />
       </AppShell.Navbar>
 
       <AppShell.Main>
