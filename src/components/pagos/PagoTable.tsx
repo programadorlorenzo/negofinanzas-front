@@ -4,6 +4,7 @@ import { memo } from 'react';
 import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack, Menu } from '@mantine/core';
 import { IconEdit, IconTrash, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard } from '@tabler/icons-react';
 import { Pago, StatusPagoColors, StatusPagoLabels, MonedaPagoLabels, StatusPago } from '@/types/pago';
+import { useAuth } from '@/hooks/useAuth';
 
 interface PagoTableProps {
 	pagos: Pago[];
@@ -22,6 +23,11 @@ export const PagoTable = memo(function PagoTable({
 	onView,
 	onChangeStatus,
 }: PagoTableProps) {
+	const { user } = useAuth();
+	
+	// Solo Admin y SuperAdmin pueden cambiar estados
+	const canChangeStatus = user?.role === 'admin' || user?.role === 'superadmin';
+
 	const formatCurrency = (amount: number, currency: string) => {
 		const symbols = {
 			PEN: 'S/.',
@@ -221,34 +227,36 @@ export const PagoTable = memo(function PagoTable({
 						</ActionIcon>
 					</Tooltip>
 					
-					<Menu shadow="md" width={200}>
-						<Menu.Target>
-							<Tooltip label="Cambiar estado">
-								<ActionIcon
-									size="xs"
-									variant="light"
-									color="grape"
-									disabled={loading}
-								>
-									<IconDots size={12} />
-								</ActionIcon>
-							</Tooltip>
-						</Menu.Target>
+					{canChangeStatus && (
+						<Menu shadow="md" width={200}>
+							<Menu.Target>
+								<Tooltip label="Cambiar estado">
+									<ActionIcon
+										size="xs"
+										variant="light"
+										color="grape"
+										disabled={loading}
+									>
+										<IconDots size={12} />
+									</ActionIcon>
+								</Tooltip>
+							</Menu.Target>
 
-						<Menu.Dropdown>
-							<Menu.Label style={{ fontSize: '11px' }}>Cambiar estado</Menu.Label>
-							{getStatusChangeOptions(pago.status).map((option) => (
-								<Menu.Item
-									key={option.status}
-									leftSection={getStatusIcon(option.status)}
-									onClick={() => onChangeStatus(pago, option.status)}
-									style={{ fontSize: '11px' }}
-								>
-									{option.label}
-								</Menu.Item>
-							))}
-						</Menu.Dropdown>
-					</Menu>
+							<Menu.Dropdown>
+								<Menu.Label style={{ fontSize: '11px' }}>Cambiar estado</Menu.Label>
+								{getStatusChangeOptions(pago.status).map((option) => (
+									<Menu.Item
+										key={option.status}
+										leftSection={getStatusIcon(option.status)}
+										onClick={() => onChangeStatus(pago, option.status)}
+										style={{ fontSize: '11px' }}
+									>
+										{option.label}
+									</Menu.Item>
+								))}
+							</Menu.Dropdown>
+						</Menu>
+					)}
 
 					<Tooltip label="Eliminar">
 						<ActionIcon

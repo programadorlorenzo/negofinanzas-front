@@ -25,7 +25,7 @@ import {
 	MonedaPago,
 	MonedaPagoLabels,
 	StatusPago,
-	StatusPagoLabels,
+	// StatusPagoLabels removido - no se usa más
 } from '@/types/pago';
 import { FilesAPI } from '@/lib/api/pagos';
 
@@ -80,7 +80,7 @@ export const PagoForm = memo(function PagoForm({
 			sucursalId: initialData?.sucursalId?.toString() || '',
 			cuentaDestinoId: initialData?.cuentaDestinoId?.toString() || '',
 			cuentaPropiaEmpresaId: initialData?.cuentaPropiaEmpresaId?.toString() || '',
-			...(isEdit && { status: initialData?.status || StatusPago.PENDIENTE }),
+			// Campo status removido - usar acción específica en tabla para cambiar estado
 		},
 		validate: {
 			descripcion: (value: string) => (!value?.trim() ? 'La descripción es requerida' : null),
@@ -93,12 +93,7 @@ export const PagoForm = memo(function PagoForm({
 		label,
 	}));
 
-	const statusOptions = isEdit
-		? Object.entries(StatusPagoLabels).map(([value, label]) => ({
-				value,
-				label,
-		  }))
-		: [];
+	// Campo status removido del formulario - usar acción específica en tabla
 
 	const sucursalOptions = [
 		{ value: '', label: 'General (Sin sucursal específica)' },
@@ -289,15 +284,7 @@ export const PagoForm = memo(function PagoForm({
 					</Grid.Col>
 				</Grid>
 
-				{isEdit && (
-					<Select
-						label="Estado"
-						placeholder="Seleccionar estado"
-						data={statusOptions}
-						{...form.getInputProps('status')}
-						disabled={loading}
-					/>
-				)}
+				{/* Campo status removido - usar acción específica de cambio de estado en tabla */}
 
 				{/* Voucher Upload */}
 				<Box>

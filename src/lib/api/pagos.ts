@@ -45,7 +45,7 @@ export class PagosAPI {
 	}
 
 	static async changeStatus(id: number, status: StatusPago): Promise<Pago> {
-		const response = await apiClient.patch(`${this.baseUrl}/${id}`, { status });
+		const response = await apiClient.patch(`${this.baseUrl}/${id}/status`, { status });
 		return response.data;
 	}
 }
