@@ -86,9 +86,9 @@ export const PagoTable = memo(function PagoTable({
 			
 			message += `${cuentaInfo}`;
 			
-			if (pago.cuentaDestino.banco) {
-				message += ` - ${pago.cuentaDestino.banco}`;
-			}
+			// Asegurar que siempre se muestre el banco
+			const banco = pago.cuentaDestino.banco || 'Banco no especificado';
+			message += ` - ${banco}`;
 			
 			if (pago.cuentaDestino.moneda) {
 				message += ` (${pago.cuentaDestino.moneda})`;
@@ -109,9 +109,9 @@ export const PagoTable = memo(function PagoTable({
 			
 			message += `${cuentaInfo}`;
 			
-			if (pago.cuentaPropiaEmpresa.banco) {
-				message += ` - ${pago.cuentaPropiaEmpresa.banco}`;
-			}
+			// Asegurar que siempre se muestre el banco
+			const banco = pago.cuentaPropiaEmpresa.banco || 'Banco no especificado';
+			message += ` - ${banco}`;
 			
 			if (pago.cuentaPropiaEmpresa.moneda) {
 				message += ` (${pago.cuentaPropiaEmpresa.moneda})`;
@@ -178,7 +178,7 @@ export const PagoTable = memo(function PagoTable({
 					#{pago.id}
 				</Text>
 			</Table.Td>
-			<Table.Td style={{ padding: '8px', maxWidth: '200px' }}>
+			<Table.Td style={{ padding: '8px', maxWidth: '300px' }}>
 				<Stack gap={2}>
 					<Text 
 						size="xs" 
@@ -408,7 +408,7 @@ export const PagoTable = memo(function PagoTable({
 					<Table.Thead>
 						<Table.Tr style={{ backgroundColor: 'var(--mantine-color-gray-0)' }}>
 							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '60px' }}>ID</Table.Th>
-							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '200px' }}>Descripción</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '300px' }}>Descripción</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '100px' }}>Coordinado</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Total</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>

@@ -311,12 +311,15 @@ export const PagoForm = memo(function PagoForm({
 						placeholder="Seleccionar imagen del voucher"
 						accept="image/*"
 						onChange={handleVoucherUpload}
-						disabled={loading || uploadingVoucher || (initialData?.status && initialData.status !== StatusPago.APROBADO)}
+						disabled={loading || uploadingVoucher || (!initialData || initialData.status !== StatusPago.APROBADO)}
 						leftSection={<IconUpload size={16} />}
 					/>
-					{(initialData?.status && initialData.status !== StatusPago.APROBADO) && (
+					{(!initialData || initialData.status !== StatusPago.APROBADO) && (
 						<Text size="xs" c="orange" mt="xs">
-							El voucher solo puede ser subido cuando el pago esté aprobado
+							{!initialData 
+								? "El voucher solo puede ser subido cuando el pago esté aprobado (durante la actualización)"
+								: "El voucher solo puede ser subido cuando el pago esté aprobado"
+							}
 						</Text>
 					)}
 					{uploadingVoucher && <Text size="xs" c="dimmed" mt="xs">Subiendo voucher...</Text>}
@@ -339,7 +342,7 @@ export const PagoForm = memo(function PagoForm({
 					</Text>
 					<FileInput
 						placeholder="Seleccionar documentos (PDF, Word, Excel, Imágenes)"
-						accept=".pdf,.doc,.docx,.xls,.xlsx,image/*"
+						accept=".pdf,.doc,.docx,.xls,.xlsx,image/*,*"
 						multiple
 						onChange={handleDocumentUpload}
 						disabled={loading || uploadingDocs}
