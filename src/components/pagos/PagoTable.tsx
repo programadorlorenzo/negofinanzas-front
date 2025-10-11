@@ -178,18 +178,35 @@ export const PagoTable = memo(function PagoTable({
 					#{pago.id}
 				</Text>
 			</Table.Td>
-			<Table.Td style={{ padding: '8px', maxWidth: '300px' }}>
-				<Text 
-					size="xs" 
-					fw={500} 
-					lineClamp={3}
-					style={{ 
-						wordBreak: 'break-word',
-						hyphens: 'auto'
-					}}
-				>
-					{pago.descripcion}
-				</Text>
+			<Table.Td style={{ padding: '8px', maxWidth: '400px' }}>
+				<Stack gap={4}>
+					<Text 
+						size="xs" 
+						fw={500} 
+						lineClamp={3}
+						style={{ 
+							wordBreak: 'break-word',
+							hyphens: 'auto'
+						}}
+					>
+						{pago.descripcion}
+					</Text>
+					{pago.justificacion && (
+						<Text 
+							size="xs" 
+							c="dimmed" 
+							fs="italic"
+							lineClamp={2}
+							style={{ 
+								fontSize: '10px',
+								wordBreak: 'break-word',
+								hyphens: 'auto'
+							}}
+						>
+							{pago.justificacion}
+						</Text>
+					)}
+				</Stack>
 			</Table.Td>
 			<Table.Td style={{ padding: '8px' }}>
 				<Text size="xs">
@@ -406,7 +423,7 @@ export const PagoTable = memo(function PagoTable({
 					<Table.Thead>
 						<Table.Tr style={{ backgroundColor: 'var(--mantine-color-gray-0)' }}>
 							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '60px' }}>ID</Table.Th>
-							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '300px' }}>Descripción</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '400px' }}>Descripción</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '100px' }}>Coordinado</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Total</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>
