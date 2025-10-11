@@ -25,11 +25,21 @@ export const PagoTable = memo(function PagoTable({
 	const [whatsappModalOpened, setWhatsappModalOpened] = useState(false);
 	const [selectedPago, setSelectedPago] = useState<Pago | null>(null);
 	
-	// Solo Admin y SuperAdmin pueden cambiar estados
-	const canChangeStatus = user?.role === 'admin' || user?.role === 'superadmin';
+	// Solo SuperAdmin puede cambiar estados
+	const canChangeStatus = user?.role === 'superadmin';
 	
 	// Solo SuperAdmin puede usar WhatsApp
 	const canUseWhatsApp = user?.role === 'superadmin';
+
+	// Función para verificar si se puede editar un pago
+	const canEditPago = (pago: Pago) => {
+		// SuperAdmin puede editar cualquier pago
+		if (user?.role === 'superadmin') {
+			return true;
+		}
+		// Otros roles solo pueden editar si el pago está pendiente o rechazado
+		return pago.status === StatusPago.PENDIENTE || pago.status === StatusPago.RECHAZADO;
+	};
 
 	const formatCurrency = (amount: number, currency: string) => {
 		const symbols = {
@@ -341,17 +351,19 @@ export const PagoTable = memo(function PagoTable({
 							<IconEye size={12} />
 						</ActionIcon>
 					</Tooltip>
-					<Tooltip label="Editar">
-						<ActionIcon
-							size="xs"
-							variant="light"
-							color="yellow"
-							onClick={() => onEdit(pago)}
-							disabled={loading}
-						>
-							<IconEdit size={12} />
-						</ActionIcon>
-					</Tooltip>
+					{canEditPago(pago) && (
+						<Tooltip label="Editar">
+							<ActionIcon
+								size="xs"
+								variant="light"
+								color="yellow"
+								onClick={() => onEdit(pago)}
+								disabled={loading}
+							>
+								<IconEdit size={12} />
+							</ActionIcon>
+						</Tooltip>
+					)}
 					
 					{canChangeStatus && (
 						<Menu shadow="md" width={200}>
