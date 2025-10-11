@@ -2,7 +2,7 @@
 
 import { memo, useState } from 'react';
 import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack, Menu, Button, Modal } from '@mantine/core';
-import { IconEdit, IconTrash, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard, IconBrandWhatsapp, IconCopy } from '@tabler/icons-react';
+import { IconEdit, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard, IconBrandWhatsapp, IconCopy } from '@tabler/icons-react';
 import { Pago, StatusPagoColors, StatusPagoLabels, MonedaPagoLabels, StatusPago } from '@/types/pago';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -10,7 +10,6 @@ interface PagoTableProps {
 	pagos: Pago[];
 	loading?: boolean;
 	onEdit: (pago: Pago) => void;
-	onDelete: (pago: Pago) => void;
 	onView: (pago: Pago) => void;
 	onChangeStatus: (pago: Pago, newStatus: StatusPago) => void;
 }
@@ -19,7 +18,6 @@ export const PagoTable = memo(function PagoTable({
 	pagos,
 	loading = false,
 	onEdit,
-	onDelete,
 	onView,
 	onChangeStatus,
 }: PagoTableProps) {
@@ -398,17 +396,7 @@ export const PagoTable = memo(function PagoTable({
 								<IconBrandWhatsapp size={12} />
 							</ActionIcon>
 						</Tooltip>
-					)}					<Tooltip label="Eliminar">
-						<ActionIcon
-							size="xs"
-							variant="light"
-							color="red"
-							onClick={() => onDelete(pago)}
-							disabled={loading}
-						>
-							<IconTrash size={12} />
-						</ActionIcon>
-					</Tooltip>
+					)}
 				</Group>
 			</Table.Td>
 		</Table.Tr>

@@ -79,7 +79,7 @@ export default function PagosPage() {
 		}
 	}, []);
 
-	const { openCreateModal, openEditModal, openViewModal, openDeleteModal, changeStatus } = usePagoModals({
+	const { openCreateModal, openEditModal, openViewModal, changeStatus } = usePagoModals({
 		sucursales,
 		cuentas,
 		onSuccess: fetchPagos,
@@ -166,7 +166,6 @@ export default function PagosPage() {
 								pagos={pagos}
 								loading={loading}
 								onEdit={openEditModal}
-								onDelete={openDeleteModal}
 								onView={openViewModal}
 								onChangeStatus={changeStatus}
 							/>
