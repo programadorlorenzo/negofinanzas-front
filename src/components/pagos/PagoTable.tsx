@@ -68,7 +68,7 @@ export const PagoTable = memo(function PagoTable({
 			message += '*URGENTE*\n\n';
 		}
 
-		message += `PAGO ${pago.id}: ${pago.descripcion}\n`;
+		message += `PAGO (COD.${pago.id}): ${pago.descripcion}\n`;
 		message += `Total: ${formatCurrency(pago.total, pago.moneda)}\n`;
 		message += `Coordinado: ${pago.coordinadoCon || 'No especificado'}\n`;
 		message += `Sucursal: ${pago.sucursal?.name || 'General'}\n`;
@@ -94,7 +94,7 @@ export const PagoTable = memo(function PagoTable({
 				message += ` (${pago.cuentaDestino.moneda})`;
 			}
 			
-			message += ` [${pago.cuentaDestino.tipo}]\n\n`;
+			message += `\n`;
 		}
 
 		// Información de cuenta empresa
