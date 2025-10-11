@@ -119,9 +119,7 @@ export const PagoTable = memo(function PagoTable({
 			
 			message += ` [${pago.cuentaPropiaEmpresa.tipo}]\n`;
 			message += `💰 Sale de cuenta empresa\n`;
-		} else {
-			message += `💳 No sale de cuenta empresa\n`;
-		}
+		} 
 
 		return message;
 	};
