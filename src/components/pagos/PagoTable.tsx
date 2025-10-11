@@ -77,12 +77,12 @@ export const PagoTable = memo(function PagoTable({
 		// Información de cuenta destino
 		if (pago.cuentaDestino) {
 			message += `*Cuenta Destino:*\n`;
-			message += `${pago.cuentaDestino.nombre}\n`;
+			message += `${pago.cuentaDestino.titular}\n`;
 			
 			// Mostrar número de cuenta o CCI según el banco
 			const cuentaInfo = pago.cuentaDestino.banco === 'BCP' 
-				? pago.cuentaDestino.numero 
-				: (pago.cuentaDestino.cci || pago.cuentaDestino.numero);
+				? pago.cuentaDestino.numeroCuenta 
+				: (pago.cuentaDestino.cci || pago.cuentaDestino.numeroCuenta);
 			
 			message += `${cuentaInfo}`;
 			
@@ -100,12 +100,12 @@ export const PagoTable = memo(function PagoTable({
 		// Información de cuenta empresa
 		if (pago.cuentaPropiaEmpresa) {
 			message += `*Cuenta Empresa:*\n`;
-			message += `${pago.cuentaPropiaEmpresa.nombre}\n`;
+			message += `${pago.cuentaPropiaEmpresa.titular}\n`;
 			
 			// Mostrar número de cuenta o CCI según el banco
 			const cuentaInfo = pago.cuentaPropiaEmpresa.banco === 'BCP' 
-				? pago.cuentaPropiaEmpresa.numero 
-				: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numero);
+				? pago.cuentaPropiaEmpresa.numeroCuenta 
+				: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numeroCuenta);
 			
 			message += `${cuentaInfo}`;
 			
@@ -228,11 +228,11 @@ export const PagoTable = memo(function PagoTable({
 			<Table.Td style={{ padding: '8px' }}>
 				{pago.cuentaDestino ? (
 					<Stack gap={2}>
-						<Text size="xs">{pago.cuentaDestino.nombre}</Text>
+						<Text size="xs">{pago.cuentaDestino.titular}</Text>
 						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 							{pago.cuentaDestino.banco === 'BCP' 
-								? pago.cuentaDestino.numero 
-								: (pago.cuentaDestino.cci || pago.cuentaDestino.numero)
+								? pago.cuentaDestino.numeroCuenta 
+								: (pago.cuentaDestino.cci || pago.cuentaDestino.numeroCuenta)
 							}
 							{pago.cuentaDestino.banco && ` - ${pago.cuentaDestino.banco}`}
 							{pago.cuentaDestino.moneda && ` (${pago.cuentaDestino.moneda})`}
@@ -248,11 +248,11 @@ export const PagoTable = memo(function PagoTable({
 			<Table.Td style={{ padding: '8px' }}>
 				{pago.cuentaPropiaEmpresa ? (
 					<Stack gap={2}>
-						<Text size="xs">{pago.cuentaPropiaEmpresa.nombre}</Text>
+						<Text size="xs">{pago.cuentaPropiaEmpresa.titular}</Text>
 						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
 							{pago.cuentaPropiaEmpresa.banco === 'BCP' 
-								? pago.cuentaPropiaEmpresa.numero 
-								: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numero)
+								? pago.cuentaPropiaEmpresa.numeroCuenta 
+								: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numeroCuenta)
 							}
 							{pago.cuentaPropiaEmpresa.banco && ` - ${pago.cuentaPropiaEmpresa.banco}`}
 							{pago.cuentaPropiaEmpresa.moneda && ` (${pago.cuentaPropiaEmpresa.moneda})`}

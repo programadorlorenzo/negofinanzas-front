@@ -38,8 +38,8 @@ export interface Pago {
 	cuentaDestinoId?: number;
 	cuentaDestino?: {
 		id: number;
-		nombre: string;
-		numero: string;
+		titular: string;
+		numeroCuenta: string;
 		tipo: string;
 		banco?: string;
 		cci?: string;
@@ -48,8 +48,8 @@ export interface Pago {
 	cuentaPropiaEmpresaId?: number;
 	cuentaPropiaEmpresa?: {
 		id: number;
-		nombre: string;
-		numero: string;
+		titular: string;
+		numeroCuenta: string;
 		tipo: string;
 		banco?: string;
 		cci?: string;
