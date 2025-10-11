@@ -339,7 +339,7 @@ export const PagoForm = memo(function PagoForm({
 					</Text>
 					<FileInput
 						placeholder="Seleccionar documentos (PDF, Word, Excel, Imágenes)"
-						accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp"
+						accept=".pdf,.doc,.docx,.xls,.xlsx,image/*"
 						multiple
 						onChange={handleDocumentUpload}
 						disabled={loading || uploadingDocs}

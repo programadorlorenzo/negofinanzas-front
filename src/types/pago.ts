@@ -41,6 +41,9 @@ export interface Pago {
 		nombre: string;
 		numero: string;
 		tipo: string;
+		banco?: string;
+		cci?: string;
+		moneda?: string;
 	};
 	cuentaPropiaEmpresaId?: number;
 	cuentaPropiaEmpresa?: {
@@ -48,6 +51,9 @@ export interface Pago {
 		nombre: string;
 		numero: string;
 		tipo: string;
+		banco?: string;
+		cci?: string;
+		moneda?: string;
 	};
 	voucherFile?: FileResponse;
 	documentFiles?: FileResponse[];

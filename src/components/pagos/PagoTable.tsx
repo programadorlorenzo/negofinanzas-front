@@ -78,14 +78,46 @@ export const PagoTable = memo(function PagoTable({
 		if (pago.cuentaDestino) {
 			message += `*Cuenta Destino:*\n`;
 			message += `${pago.cuentaDestino.nombre}\n`;
-			message += `${pago.cuentaDestino.numero} (${pago.cuentaDestino.tipo})\n\n`;
+			
+			// Mostrar número de cuenta o CCI según el banco
+			const cuentaInfo = pago.cuentaDestino.banco === 'BCP' 
+				? pago.cuentaDestino.numero 
+				: (pago.cuentaDestino.cci || pago.cuentaDestino.numero);
+			
+			message += `${cuentaInfo}`;
+			
+			if (pago.cuentaDestino.banco) {
+				message += ` - ${pago.cuentaDestino.banco}`;
+			}
+			
+			if (pago.cuentaDestino.moneda) {
+				message += ` (${pago.cuentaDestino.moneda})`;
+			}
+			
+			message += ` [${pago.cuentaDestino.tipo}]\n\n`;
 		}
 
 		// Información de cuenta empresa
 		if (pago.cuentaPropiaEmpresa) {
 			message += `*Cuenta Empresa:*\n`;
 			message += `${pago.cuentaPropiaEmpresa.nombre}\n`;
-			message += `${pago.cuentaPropiaEmpresa.numero} (${pago.cuentaPropiaEmpresa.tipo})\n`;
+			
+			// Mostrar número de cuenta o CCI según el banco
+			const cuentaInfo = pago.cuentaPropiaEmpresa.banco === 'BCP' 
+				? pago.cuentaPropiaEmpresa.numero 
+				: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numero);
+			
+			message += `${cuentaInfo}`;
+			
+			if (pago.cuentaPropiaEmpresa.banco) {
+				message += ` - ${pago.cuentaPropiaEmpresa.banco}`;
+			}
+			
+			if (pago.cuentaPropiaEmpresa.moneda) {
+				message += ` (${pago.cuentaPropiaEmpresa.moneda})`;
+			}
+			
+			message += ` [${pago.cuentaPropiaEmpresa.tipo}]\n`;
 			message += `💰 Sale de cuenta empresa\n`;
 		} else {
 			message += `💳 No sale de cuenta empresa\n`;
@@ -146,7 +178,7 @@ export const PagoTable = memo(function PagoTable({
 					#{pago.id}
 				</Text>
 			</Table.Td>
-			<Table.Td style={{ padding: '8px', maxWidth: '120px' }}>
+			<Table.Td style={{ padding: '8px', maxWidth: '200px' }}>
 				<Stack gap={2}>
 					<Text 
 						size="xs" 
@@ -200,7 +232,13 @@ export const PagoTable = memo(function PagoTable({
 					<Stack gap={2}>
 						<Text size="xs">{pago.cuentaDestino.nombre}</Text>
 						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
-							{pago.cuentaDestino.numero} ({pago.cuentaDestino.tipo})
+							{pago.cuentaDestino.banco === 'BCP' 
+								? pago.cuentaDestino.numero 
+								: (pago.cuentaDestino.cci || pago.cuentaDestino.numero)
+							}
+							{pago.cuentaDestino.banco && ` - ${pago.cuentaDestino.banco}`}
+							{pago.cuentaDestino.moneda && ` (${pago.cuentaDestino.moneda})`}
+							{` [${pago.cuentaDestino.tipo}]`}
 						</Text>
 					</Stack>
 				) : (
@@ -214,7 +252,13 @@ export const PagoTable = memo(function PagoTable({
 					<Stack gap={2}>
 						<Text size="xs">{pago.cuentaPropiaEmpresa.nombre}</Text>
 						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
-							{pago.cuentaPropiaEmpresa.numero} ({pago.cuentaPropiaEmpresa.tipo})
+							{pago.cuentaPropiaEmpresa.banco === 'BCP' 
+								? pago.cuentaPropiaEmpresa.numero 
+								: (pago.cuentaPropiaEmpresa.cci || pago.cuentaPropiaEmpresa.numero)
+							}
+							{pago.cuentaPropiaEmpresa.banco && ` - ${pago.cuentaPropiaEmpresa.banco}`}
+							{pago.cuentaPropiaEmpresa.moneda && ` (${pago.cuentaPropiaEmpresa.moneda})`}
+							{` [${pago.cuentaPropiaEmpresa.tipo}]`}
 						</Text>
 					</Stack>
 				) : (
@@ -364,8 +408,8 @@ export const PagoTable = memo(function PagoTable({
 					<Table.Thead>
 						<Table.Tr style={{ backgroundColor: 'var(--mantine-color-gray-0)' }}>
 							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '60px' }}>ID</Table.Th>
-							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '120px' }}>Descripción</Table.Th>
-							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Coordinado</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '200px' }}>Descripción</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '100px' }}>Coordinado</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Total</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>
 							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Sucursal</Table.Th>
