@@ -1,8 +1,8 @@
 'use client';
 
-import { memo } from 'react';
-import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack, Menu } from '@mantine/core';
-import { IconEdit, IconTrash, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard } from '@tabler/icons-react';
+import { memo, useState } from 'react';
+import { Table, Badge, Group, ActionIcon, Text, Tooltip, Stack, Menu, Button, Modal } from '@mantine/core';
+import { IconEdit, IconTrash, IconEye, IconFileText, IconDots, IconCheck, IconX, IconClock, IconCreditCard, IconBrandWhatsapp, IconCopy } from '@tabler/icons-react';
 import { Pago, StatusPagoColors, StatusPagoLabels, MonedaPagoLabels, StatusPago } from '@/types/pago';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -24,9 +24,14 @@ export const PagoTable = memo(function PagoTable({
 	onChangeStatus,
 }: PagoTableProps) {
 	const { user } = useAuth();
+	const [whatsappModalOpened, setWhatsappModalOpened] = useState(false);
+	const [selectedPago, setSelectedPago] = useState<Pago | null>(null);
 	
 	// Solo Admin y SuperAdmin pueden cambiar estados
 	const canChangeStatus = user?.role === 'admin' || user?.role === 'superadmin';
+	
+	// Solo SuperAdmin puede usar WhatsApp
+	const canUseWhatsApp = user?.role === 'superadmin';
 
 	const formatCurrency = (amount: number, currency: string) => {
 		const symbols = {
@@ -48,6 +53,64 @@ export const PagoTable = memo(function PagoTable({
 
 	const getFileUrl = (fileId: number) => {
 		return `${process.env.NEXT_PUBLIC_API_URL}/files/${fileId}`;
+	};
+
+	const formatWhatsAppMessage = (pago: Pago, isUrgent: boolean = false) => {
+		const formatCurrency = (amount: number, currency: string) => {
+			const symbols = { PEN: 'S/.', USD: '$', EUR: '€' };
+			const symbol = symbols[currency as keyof typeof symbols] || currency;
+			return `${symbol} ${amount.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+		};
+
+		let message = '';
+		
+		if (isUrgent) {
+			message += '*URGENTE*\n\n';
+		}
+
+		message += `PAGO ${pago.id}: ${pago.descripcion}\n`;
+		message += `Total: ${formatCurrency(pago.total, pago.moneda)}\n`;
+		message += `Coordinado: ${pago.coordinadoCon || 'No especificado'}\n`;
+		message += `Sucursal: ${pago.sucursal?.name || 'General'}\n`;
+		message += `Justificación: ${pago.justificacion || 'No especificada'}\n\n`;
+
+		// Información de cuenta destino
+		if (pago.cuentaDestino) {
+			message += `*Cuenta Destino:*\n`;
+			message += `${pago.cuentaDestino.nombre}\n`;
+			message += `${pago.cuentaDestino.numero} (${pago.cuentaDestino.tipo})\n\n`;
+		}
+
+		// Información de cuenta empresa
+		if (pago.cuentaPropiaEmpresa) {
+			message += `*Cuenta Empresa:*\n`;
+			message += `${pago.cuentaPropiaEmpresa.nombre}\n`;
+			message += `${pago.cuentaPropiaEmpresa.numero} (${pago.cuentaPropiaEmpresa.tipo})\n`;
+			message += `💰 Sale de cuenta empresa\n`;
+		} else {
+			message += `💳 No sale de cuenta empresa\n`;
+		}
+
+		return message;
+	};
+
+	const handleWhatsAppClick = (pago: Pago) => {
+		setSelectedPago(pago);
+		setWhatsappModalOpened(true);
+	};
+
+	const copyToClipboard = async (isUrgent: boolean) => {
+		if (!selectedPago) return;
+		
+		const message = formatWhatsAppMessage(selectedPago, isUrgent);
+		try {
+			await navigator.clipboard.writeText(message);
+			setWhatsappModalOpened(false);
+			setSelectedPago(null);
+			// Aquí podrías agregar una notificación de éxito
+		} catch (error) {
+			console.error('Error copying to clipboard:', error);
+		}
 	};
 
 	const getStatusIcon = (status: StatusPago) => {
@@ -83,9 +146,17 @@ export const PagoTable = memo(function PagoTable({
 					#{pago.id}
 				</Text>
 			</Table.Td>
-			<Table.Td style={{ padding: '8px' }}>
+			<Table.Td style={{ padding: '8px', maxWidth: '120px' }}>
 				<Stack gap={2}>
-					<Text size="xs" fw={500} lineClamp={2}>
+					<Text 
+						size="xs" 
+						fw={500} 
+						lineClamp={3}
+						style={{ 
+							wordBreak: 'break-word',
+							hyphens: 'auto'
+						}}
+					>
 						{pago.descripcion}
 					</Text>
 					{pago.coordinadoCon && (
@@ -257,8 +328,20 @@ export const PagoTable = memo(function PagoTable({
 							</Menu.Dropdown>
 						</Menu>
 					)}
-
-					<Tooltip label="Eliminar">
+					
+					{canUseWhatsApp && (
+						<Tooltip label="Copiar para WhatsApp">
+							<ActionIcon
+								size="xs"
+								variant="light"
+								color="green"
+								onClick={() => handleWhatsAppClick(pago)}
+								disabled={loading}
+							>
+								<IconBrandWhatsapp size={12} />
+							</ActionIcon>
+						</Tooltip>
+					)}					<Tooltip label="Eliminar">
 						<ActionIcon
 							size="xs"
 							variant="light"
@@ -275,44 +358,78 @@ export const PagoTable = memo(function PagoTable({
 	));
 
 	return (
-		<Table.ScrollContainer minWidth={1200}>
-			<Table striped highlightOnHover style={{ fontSize: '12px' }}>
-				<Table.Thead>
-					<Table.Tr>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>ID</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Descripción</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Monto</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Sucursal</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Destino</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Empresa</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Archivos</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Fecha</Table.Th>
-						<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Acciones</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody style={{ fontSize: '11px' }}>
-					{loading ? (
-						<Table.Tr>
-							<Table.Td colSpan={10}>
-								<Text ta="center" py="md">
-									Cargando...
-								</Text>
-							</Table.Td>
+		<>
+			<Table.ScrollContainer minWidth={800}>
+				<Table stickyHeader highlightOnHover withColumnBorders style={{ fontSize: '11px' }}>
+					<Table.Thead>
+						<Table.Tr style={{ backgroundColor: 'var(--mantine-color-gray-0)' }}>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '60px' }}>ID</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px', width: '120px' }}>Descripción</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Coordinado</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Total</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Estado</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Sucursal</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Destino</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Cuenta Empresa</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Archivos</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Fecha</Table.Th>
+							<Table.Th style={{ fontSize: '11px', padding: '8px' }}>Acciones</Table.Th>
 						</Table.Tr>
-					) : rows.length > 0 ? (
-						rows
-					) : (
-						<Table.Tr>
-							<Table.Td colSpan={10}>
-								<Text ta="center" py="md" c="dimmed">
-									No se encontraron pagos
-								</Text>
-							</Table.Td>
-						</Table.Tr>
-					)}
-				</Table.Tbody>
-			</Table>
-		</Table.ScrollContainer>
+					</Table.Thead>
+					<Table.Tbody style={{ fontSize: '11px' }}>
+						{loading ? (
+							<Table.Tr>
+								<Table.Td colSpan={10}>
+									<Text ta="center" py="md">
+										Cargando...
+									</Text>
+								</Table.Td>
+							</Table.Tr>
+						) : rows.length > 0 ? (
+							rows
+						) : (
+							<Table.Tr>
+								<Table.Td colSpan={10}>
+									<Text ta="center" py="md" c="dimmed">
+										No se encontraron pagos
+									</Text>
+								</Table.Td>
+							</Table.Tr>
+						)}
+					</Table.Tbody>
+				</Table>
+			</Table.ScrollContainer>
+			
+			{/* Modal para WhatsApp */}
+			<Modal
+				opened={whatsappModalOpened}
+				onClose={() => setWhatsappModalOpened(false)}
+				title="Copiar información para WhatsApp"
+				size="sm"
+			>
+				<Stack gap="md">
+					<Text size="sm">
+						¿Deseas marcar este pago como urgente?
+					</Text>
+					<Group justify="center" gap="sm">
+						<Button
+							variant="light"
+							color="gray"
+							leftSection={<IconCopy size={16} />}
+							onClick={() => copyToClipboard(false)}
+						>
+							No, normal
+						</Button>
+						<Button
+							color="orange"
+							leftSection={<IconCopy size={16} />}
+							onClick={() => copyToClipboard(true)}
+						>
+							Sí, urgente
+						</Button>
+					</Group>
+				</Stack>
+			</Modal>
+		</>
 	);
 });

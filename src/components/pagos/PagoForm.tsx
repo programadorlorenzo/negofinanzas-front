@@ -47,7 +47,16 @@ interface PagoFormProps {
 	onSubmit: (data: CreatePagoData | UpdatePagoData) => Promise<void>;
 	onCancel: () => void;
 	sucursales: Array<{ id: number; name: string; code?: string }>;
-	cuentas: Array<{ id: number; titular: string; numeroCuenta: string; tipo: string; propiaEmpresa?: boolean }>;
+	cuentas: Array<{ 
+		id: number; 
+		titular: string; 
+		numeroCuenta: string; 
+		cci?: string;
+		banco?: string;
+		moneda?: string;
+		tipo: string; 
+		propiaEmpresa?: boolean;
+	}>;
 	loading?: boolean;
 	isEdit?: boolean;
 }
@@ -105,10 +114,17 @@ export const PagoForm = memo(function PagoForm({
 
 	const cuentaDestinoOptions = [
 		{ value: '', label: 'Sin cuenta destino específica' },
-		...cuentas.map((cuenta) => ({
-			value: cuenta.id.toString(),
-			label: `${cuenta.titular} - ${cuenta.numeroCuenta} (${cuenta.tipo})`,
-		})),
+		...cuentas.map((cuenta) => {
+			const cuentaInfo = cuenta.banco === 'BCP' ? cuenta.numeroCuenta : cuenta.cci;
+			const bancoInfo = cuenta.banco ? ` - ${cuenta.banco}` : '';
+			const monedaInfo = cuenta.moneda ? ` (${cuenta.moneda})` : '';
+			const tipoInfo = cuenta.tipo ? ` [${cuenta.tipo}]` : '';
+			
+			return {
+				value: cuenta.id.toString(),
+				label: `${cuenta.titular} - ${cuentaInfo}${bancoInfo}${monedaInfo}${tipoInfo}`,
+			};
+		}),
 	];
 
 	const cuentaPropiaEmpresaOptions = [
@@ -295,9 +311,14 @@ export const PagoForm = memo(function PagoForm({
 						placeholder="Seleccionar imagen del voucher"
 						accept="image/*"
 						onChange={handleVoucherUpload}
-						disabled={loading || uploadingVoucher}
+						disabled={loading || uploadingVoucher || (initialData?.status && initialData.status !== StatusPago.APROBADO)}
 						leftSection={<IconUpload size={16} />}
 					/>
+					{(initialData?.status && initialData.status !== StatusPago.APROBADO) && (
+						<Text size="xs" c="orange" mt="xs">
+							El voucher solo puede ser subido cuando el pago esté aprobado
+						</Text>
+					)}
 					{uploadingVoucher && <Text size="xs" c="dimmed" mt="xs">Subiendo voucher...</Text>}
 					{voucherFile && (
 						<Badge color="green" size="sm" mt="xs">
@@ -317,8 +338,8 @@ export const PagoForm = memo(function PagoForm({
 						Documentos adicionales
 					</Text>
 					<FileInput
-						placeholder="Seleccionar documentos (PDF, Word, Excel)"
-						accept=".pdf,.doc,.docx,.xls,.xlsx"
+						placeholder="Seleccionar documentos (PDF, Word, Excel, Imágenes)"
+						accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp"
 						multiple
 						onChange={handleDocumentUpload}
 						disabled={loading || uploadingDocs}
