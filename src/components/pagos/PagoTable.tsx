@@ -179,24 +179,22 @@ export const PagoTable = memo(function PagoTable({
 				</Text>
 			</Table.Td>
 			<Table.Td style={{ padding: '8px', maxWidth: '300px' }}>
-				<Stack gap={2}>
-					<Text 
-						size="xs" 
-						fw={500} 
-						lineClamp={3}
-						style={{ 
-							wordBreak: 'break-word',
-							hyphens: 'auto'
-						}}
-					>
-						{pago.descripcion}
-					</Text>
-					{pago.coordinadoCon && (
-						<Text size="xs" c="dimmed" style={{ fontSize: '10px' }}>
-							Coordinado con: {pago.coordinadoCon}
-						</Text>
-					)}
-				</Stack>
+				<Text 
+					size="xs" 
+					fw={500} 
+					lineClamp={3}
+					style={{ 
+						wordBreak: 'break-word',
+						hyphens: 'auto'
+					}}
+				>
+					{pago.descripcion}
+				</Text>
+			</Table.Td>
+			<Table.Td style={{ padding: '8px' }}>
+				<Text size="xs">
+					{pago.coordinadoCon || '-'}
+				</Text>
 			</Table.Td>
 			<Table.Td style={{ padding: '8px' }}>
 				<Text size="xs" fw={600}>
@@ -423,7 +421,7 @@ export const PagoTable = memo(function PagoTable({
 					<Table.Tbody style={{ fontSize: '11px' }}>
 						{loading ? (
 							<Table.Tr>
-								<Table.Td colSpan={10}>
+								<Table.Td colSpan={11}>
 									<Text ta="center" py="md">
 										Cargando...
 									</Text>
@@ -433,7 +431,7 @@ export const PagoTable = memo(function PagoTable({
 							rows
 						) : (
 							<Table.Tr>
-								<Table.Td colSpan={10}>
+								<Table.Td colSpan={11}>
 									<Text ta="center" py="md" c="dimmed">
 										No se encontraron pagos
 									</Text>
