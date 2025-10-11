@@ -32,6 +32,7 @@ export const navigationMenu: MenuItem[] = [
     href: '/cuentas',
     icon: IconCreditCard,
     description: 'Gestión de cuentas bancarias',
+    requiredRoles: ['superadmin', 'admin'],
   },
   {
     id: 'pagos',

@@ -21,6 +21,7 @@ import { PagosAPI } from '@/lib/api/pagos';
 import { Pago, PagoFilters, PaginatedPagosResponse } from '@/types/pago';
 import { SucursalesAPI } from '@/lib/api/sucursales';
 import { CuentasAPI } from '@/lib/api/cuentas';
+import { useAuth } from '@/hooks/useAuth';
 
 const initialFilters: PagoFilters = {
 	page: 1,
@@ -28,6 +29,7 @@ const initialFilters: PagoFilters = {
 };
 
 export default function PagosPage() {
+	const { user } = useAuth();
 	const [pagos, setPagos] = useState<Pago[]>([]);
 	const [pagination, setPagination] = useState({
 		total: 0,
@@ -118,9 +120,11 @@ export default function PagosPage() {
 						<Title order={2}>Gestión de Pagos</Title>
 						<Text c="dimmed">Administra los pagos y sus documentos</Text>
 					</div>
-					<Button leftSection={<IconPlus size={16} />} onClick={openCreateModal}>
-						Nuevo Pago
-					</Button>
+					{(user?.role === 'superadmin' || user?.role === 'admin') && (
+						<Button leftSection={<IconPlus size={16} />} onClick={openCreateModal}>
+							Nuevo Pago
+						</Button>
+					)}
 				</Group>
 
 				{/* Filters */}
